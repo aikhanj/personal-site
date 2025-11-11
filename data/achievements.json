@@ -1,0 +1,37 @@
+[
+  {
+    "timestamp": "2025-02-14 00:01:12",
+    "type": "research",
+    "title": "assessing ai models for personalized nutrition",
+    "publication": "CAJ",
+    "status": "published"
+  },
+  {
+    "timestamp": "2024-06-03 09:42:50",
+    "type": "research",
+    "title": "turkic machine translation benchmarks",
+    "publication": "JSR",
+    "status": "published"
+  },
+  {
+    "timestamp": "2024-09-10 01:00:00",
+    "type": "press",
+    "title": "featured by TechTimes for transforming Kyrgyz tech education",
+    "publication": "TechTimes",
+    "status": "featured"
+  },
+  {
+    "timestamp": "2024-03-15 14:23:45",
+    "type": "research",
+    "title": "municipal ai deployment framework",
+    "publication": "internal",
+    "status": "ongoing"
+  },
+  {
+    "timestamp": "2023-11-20 22:10:33",
+    "type": "press",
+    "title": "recognized for open-source contributions to central asian tech",
+    "publication": "DevCentral",
+    "status": "featured"
+  }
+]

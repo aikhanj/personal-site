@@ -1,0 +1,37 @@
+[
+  {
+    "id": "before-the-rain",
+    "title": "Before the Rain",
+    "year": 1994,
+    "director": "Milcho Manchevski",
+    "note": "form over plot. silence wins."
+  },
+  {
+    "id": "short-film-love",
+    "title": "A Short Film About Love",
+    "year": 1988,
+    "director": "Krzysztof Kieślowski",
+    "note": "glass and longing."
+  },
+  {
+    "id": "stalker",
+    "title": "Stalker",
+    "year": 1979,
+    "director": "Andrei Tarkovsky",
+    "note": "faith in ruins. truth requires sacrifice."
+  },
+  {
+    "id": "fallen-angels",
+    "title": "Fallen Angels",
+    "year": 1995,
+    "director": "Wong Kar-wai",
+    "note": "neon isolation. beauty in disconnection."
+  },
+  {
+    "id": "tokyo-drifter",
+    "title": "Tokyo Drifter",
+    "year": 1966,
+    "director": "Seijun Suzuki",
+    "note": "color as violence. style as substance."
+  }
+]

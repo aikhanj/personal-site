@@ -1,0 +1,34 @@
+[
+  {
+    "id": "municipal-labs",
+    "title": "MunicipalLabs()",
+    "plainTitle": "Fixing Broken Systems",
+    "description": "deploying ai infrastructure for municipal governance. reconstructing local systems from the ground up.",
+    "tech": ["Python", "TensorFlow", "FastAPI", "PostgreSQL"],
+    "status": "active"
+  },
+  {
+    "id": "turkic-mt",
+    "title": "TurkicMT.benchmark()",
+    "plainTitle": "Language Translation Research",
+    "description": "establishing machine translation benchmarks for turkic languages. bridging communication gaps through computation.",
+    "tech": ["PyTorch", "Transformers", "BLEU"],
+    "status": "published"
+  },
+  {
+    "id": "nutrition-ai",
+    "title": "NutritionEngine.optimize()",
+    "plainTitle": "Personalized Health Systems",
+    "description": "assessing ai models for personalized nutrition. rebuilding health infrastructure through data.",
+    "tech": ["ML Models", "Health APIs", "Research"],
+    "status": "research"
+  },
+  {
+    "id": "kyrgyz-edu",
+    "title": "EduReform.execute()",
+    "plainTitle": "Tech Education Transformation",
+    "description": "transforming kyrgyz tech education systems. building the next generation of system architects.",
+    "tech": ["Curriculum Design", "Training", "Mentorship"],
+    "status": "ongoing"
+  }
+]

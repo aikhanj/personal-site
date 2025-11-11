@@ -1,0 +1,423 @@
+@import "tailwindcss";
+
+:root {
+  --black: #000000;
+  --crimson: #ff0033;
+  --cyan: #00ffd5;
+  --text: #d0d0d0;
+  --text-dim: #888888;
+  --border-crimson: rgba(255, 0, 51, 0.3);
+  --glow-crimson: rgba(255, 0, 51, 0.5);
+  --glow-cyan: rgba(0, 255, 213, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Terminal Text Styling */
+.terminal-text {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+}
+
+/* Scanlines Effect */
+.scanlines {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 3px
+  );
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
+  z-index: 50;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+/* CRT Effect */
+.crt-effect {
+  position: relative;
+}
+
+.crt-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  pointer-events: none;
+  z-index: 40;
+}
+
+.crt-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 40;
+}
+
+/* Glitch Animation */
+.glitch {
+  position: relative;
+  animation: glitch-main 3s infinite;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.glitch::before {
+  color: var(--crimson);
+  animation: glitch-before 0.3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.glitch::after {
+  color: var(--cyan);
+  animation: glitch-after 0.3s infinite;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-main {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes glitch-before {
+  0%, 100% {
+    transform: translate(0);
+  }
+  33% {
+    transform: translate(-3px, 0);
+  }
+  66% {
+    transform: translate(3px, 0);
+  }
+}
+
+@keyframes glitch-after {
+  0%, 100% {
+    transform: translate(0);
+  }
+  33% {
+    transform: translate(3px, 0);
+  }
+  66% {
+    transform: translate(-3px, 0);
+  }
+}
+
+/* Subtle Glitch (for hover effects) */
+.glitch-subtle {
+  animation: glitch-subtle 2s ease-in-out infinite;
+}
+
+@keyframes glitch-subtle {
+  0%, 90%, 100% {
+    transform: translate(0);
+    filter: none;
+  }
+  92% {
+    transform: translate(-1px, 1px);
+  }
+  94% {
+    transform: translate(1px, -1px);
+  }
+  96% {
+    transform: translate(-1px, -1px);
+  }
+  98% {
+    transform: translate(1px, 1px);
+  }
+}
+
+/* Flicker Animation */
+.flicker {
+  animation: flicker 0.15s infinite alternate;
+}
+
+@keyframes flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Slow Flicker */
+.flicker-slow {
+  animation: flicker-slow 4s ease-in-out infinite;
+}
+
+@keyframes flicker-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Terminal Cursor */
+.terminal-cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1em;
+  background: var(--crimson);
+  animation: cursor-blink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+@keyframes cursor-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Neon Glow Effects */
+.glow-crimson {
+  text-shadow: 
+    0 0 10px var(--glow-crimson),
+    0 0 20px var(--glow-crimson),
+    0 0 30px var(--glow-crimson);
+}
+
+.glow-cyan {
+  text-shadow: 
+    0 0 10px var(--glow-cyan),
+    0 0 20px var(--glow-cyan),
+    0 0 30px var(--glow-cyan);
+}
+
+.border-glow-crimson {
+  box-shadow: 
+    0 0 5px var(--crimson),
+    0 0 10px var(--crimson),
+    inset 0 0 5px var(--border-crimson);
+}
+
+.border-glow-cyan {
+  box-shadow: 
+    0 0 5px var(--cyan),
+    0 0 10px var(--cyan),
+    inset 0 0 5px rgba(0, 255, 213, 0.3);
+}
+
+/* Hover Effects */
+.hover-glitch:hover {
+  animation: glitch-subtle 0.3s ease-in-out;
+}
+
+.hover-static:hover {
+  animation: static-noise 0.1s infinite;
+}
+
+@keyframes static-noise {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -1px);
+  }
+  100% {
+    transform: translate(1px, 1px);
+  }
+}
+
+/* Red Pulse (for heartbeat effect) */
+.pulse-red {
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--crimson);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 40px var(--crimson), 0 0 60px var(--crimson);
+    opacity: 0.8;
+  }
+}
+
+/* Text reveal animation */
+.text-reveal {
+  opacity: 0;
+  animation: text-reveal 0.8s ease-out forwards;
+}
+
+@keyframes text-reveal {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+/* Utility Classes */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .glitch,
+  .flicker,
+  .flicker-slow {
+    animation: none !important;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .scanlines::before {
+    animation-duration: 12s;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    display: none;
+  }
+  
+  body {
+    cursor: default;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--crimson);
+  border: 1px solid var(--black);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
+}
+
+/* Selection */
+::selection {
+  background: var(--crimson);
+  color: var(--black);
+}
+
+::-moz-selection {
+  background: var(--crimson);
+  color: var(--black);
+}
