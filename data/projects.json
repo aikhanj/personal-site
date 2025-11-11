@@ -1,62 +1,72 @@
 [
   {
     "id": "municipal-legaside",
-    "name": "municipallabs.Legaside",
-    "role": "ai infrastructure for municipal governance",
+    "pid": 1312,
+    "cpu": 0.1,
+    "name": "municipal.labs",
+    "status": "running",
+    "uptime": "00:03:14",
+    "purpose": "ai infra for governance",
     "stack": ["next.js", "supabase", "pgvector", "rag"],
-    "status": "active",
     "links": {
       "repo": "https://github.com/Lutashi/MunicipalLabs-CRM",
       "live": "/work#municipal"
-    },
-    "body": "deploying ai to triage legislative inboxes and surface signals. reduces manual tagging, exposes backlog risk, and gives leadership real-time context."
+    }
   },
   {
     "id": "municipal-landing",
-    "name": "municipallabs.landing",
-    "role": "yc-style marketing site",
+    "pid": 1328,
+    "cpu": 0.0,
+    "name": "municipal.labs.landing",
+    "status": "active",
+    "uptime": "00:02:45",
+    "purpose": "yc-style marketing surface",
     "stack": ["next.js", "framer-motion"],
-    "status": "published",
     "links": {
       "repo": "https://github.com/Lutashi/MunicipalLabs-LandingPage",
       "live": "/"
-    },
-    "body": "crisp narrative around problem→mission→product. animation-heavy, but fast and accessible."
+    }
   },
   {
     "id": "devmolink",
+    "pid": 1314,
+    "cpu": 0.0,
     "name": "devmo.link",
-    "role": "developer matchmaking with encrypted comms",
+    "status": "sleeping",
+    "uptime": "00:01:08",
+    "purpose": "developer matchmaking with encrypted comms",
     "stack": ["next.js", "firebase", "nextauth", "farcaster"],
-    "status": "active",
     "links": {
       "repo": "https://github.com/Lutashi/DevmoLink",
       "live": "/work#devmolink"
-    },
-    "body": "connects hackathon builders via interest vectors. end-to-end encrypted messaging and safe media pipeline."
+    }
   },
   {
     "id": "fedramp",
+    "pid": 1317,
+    "cpu": 0.2,
     "name": "fedramp.ai.compliance",
-    "role": "automate fedramp paperwork",
+    "status": "running",
+    "uptime": "00:04:22",
+    "purpose": "automate fedramp paperwork",
     "stack": ["next.js", "typescript"],
-    "status": "published",
     "links": {
       "repo": "https://github.com/Lutashi/Fedramp-AI-Compliance-Tool",
       "live": "/work#fedramp"
-    },
-    "body": "questionnaire → system security plan drafts. turns weeks of docs into hours; opinionated, auditable outputs."
+    }
   },
   {
     "id": "whitman",
+    "pid": 1322,
+    "cpu": 0.0,
     "name": "gmail.promote.whitman",
-    "role": "inbox triage as code",
-    "stack": ["apps script (javascript)"],
-    "status": "active",
+    "status": "idle",
+    "uptime": "00:00:59",
+    "purpose": "inbox triage as code",
+    "stack": ["apps-script", "javascript"],
     "links": {
       "repo": "https://github.com/Lutashi/gmail-promote-whitman",
       "live": "/work#whitman"
-    },
-    "body": "my inbox became a data lake. deterministic keyword routing + time windows to surface only"
+    }
   }
 ]

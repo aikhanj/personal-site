@@ -25,7 +25,7 @@ export default function Manifesto() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl font-bold mb-12 text-[#d0d0d0] tracking-tight"
+          className="text-3xl md:text-4xl font-bold mb-20 text-[#d0d0d0] tracking-tight"
         >
           why i build
         </motion.h2>
@@ -47,33 +47,14 @@ export default function Manifesto() {
               }}
             >
               <p className="text-lg md:text-xl text-[#d0d0d0] font-light leading-relaxed">
-                {hoveredLine === index ? (
-                  <GlitchText
-                    trigger={true}
-                    intensity="low"
-                    className="block"
-                  >
-                    {line}
-                  </GlitchText>
-                ) : (
-                  <span className="block">{line}</span>
-                )}
-              </p>
-
-              {/* Subtle glitch effect on hover */}
-              {hoveredLine === index && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: [0, 0.3, 0] }}
-                  transition={{ duration: 0.1, repeat: 2 }}
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    textShadow: "2px 0 #ff0033, -2px 0 #00ffd5",
-                  }}
+                <GlitchText
+                  trigger={hoveredLine === index}
+                  intensity="low"
+                  className="block"
                 >
                   {line}
-                </motion.div>
-              )}
+                </GlitchText>
+              </p>
             </motion.div>
           ))}
         </div>

@@ -27,16 +27,6 @@ export default function Contact() {
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4 py-20">
       <div className="max-w-4xl w-full">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl font-bold mb-12 text-[#d0d0d0] tracking-tight"
-        >
-          contact
-        </motion.h2>
-
         <div className="font-mono space-y-6">
           {/* Command Line Prompt */}
           <motion.div
@@ -46,8 +36,8 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
             className="text-base md:text-lg"
           >
-            <span className="text-[#00ffd5]">$</span>{" "}
-            <span className="text-[#d0d0d0]">connect --protocol=email</span>
+            <span className="text-[#00ffd5]"><GlitchText intensity="low">$</GlitchText></span>{" "}
+            <span className="text-[#d0d0d0]"><GlitchText intensity="low">connect --protocol=email</GlitchText></span>
             {!showEmail && (
               <motion.button
                 onClick={handleReveal}
@@ -71,25 +61,30 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               className="text-base md:text-lg"
             >
-              <span className="text-[#00ffd5]">[</span>
-              <span className="text-[#d0d0d0]">response</span>
-              <span className="text-[#00ffd5]">]</span>{" "}
-              <span className="text-[#d0d0d0]">connecting...</span>
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">[</GlitchText></span>
+              <span className="text-[#d0d0d0]"><GlitchText intensity="low">response</GlitchText></span>
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">]</GlitchText></span>{" "}
+              <span className="text-[#d0d0d0]"><GlitchText intensity="low">connecting...</GlitchText></span>
               <br />
-              <span className="text-[#00ffd5]">[</span>
-              <span className="text-[#d0d0d0]">response</span>
-              <span className="text-[#00ffd5]">]</span>{" "}
-              <span className="text-[#d0d0d0]">protocol established</span>
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">[</GlitchText></span>
+              <span className="text-[#d0d0d0]"><GlitchText intensity="low">secure</GlitchText></span>
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">]</GlitchText></span>{" "}
+              <span className="text-[#d0d0d0]"><GlitchText intensity="low">protocol established</GlitchText></span>
               <br />
-              <span className="text-[#00ffd5]">[</span>
-              <span className="text-[#d0d0d0]">email</span>
-              <span className="text-[#00ffd5]">]</span>{" "}
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">[</GlitchText></span>
+              <span className="text-[#d0d0d0]"><GlitchText intensity="low">connect</GlitchText></span>
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">]</GlitchText></span>{" "}
+              <span className="text-[#d0d0d0]"><GlitchText intensity="low">if youre at princeton, lets grab a coffee</GlitchText></span>
+              <br />
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">[</GlitchText></span>
+              <span className="text-[#d0d0d0]"><GlitchText intensity="low">email</GlitchText></span>
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">]</GlitchText></span>{" "}
               <GlitchText
                 trigger={glitchTrigger}
                 intensity="medium"
                 className="text-[#ff0033]"
               >
-                aj5828@princeton.edu
+                ajumashukurov@gmail.com
               </GlitchText>
             </motion.div>
           )}

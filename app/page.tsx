@@ -7,7 +7,7 @@ import Hero from '@/components/Hero';
 import Manifesto from '@/components/Manifesto';
 import Achievements from '@/components/Achievements';
 import Projects from '@/components/Projects';
-import Films from '@/components/Films';
+import Films from '@/app/components/Films';
 import Contact from '@/components/Contact';
 
 export default function Home() {

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import achievementsData from "@/data/achievements.json";
+import GlitchText from "./GlitchText";
 
 interface Achievement {
   timestamp: string;
@@ -181,7 +182,7 @@ export default function Achievements() {
               letterSpacing: '0.02em',
             }}
           >
-            [ACCESS LEVEL: public]
+            <GlitchText intensity="low">[ACCESS LEVEL: public]</GlitchText>
           </div>
 
           {/* Section header */}
@@ -193,7 +194,7 @@ export default function Achievements() {
               letterSpacing: '0.04em',
             }}
           >
-            &gt; achievements.log
+            <GlitchText intensity="low">&gt; achievements.log</GlitchText>
           </div>
 
           {/* Terminal command */}
@@ -208,7 +209,7 @@ export default function Achievements() {
               letterSpacing: '0.02em',
             }}
           >
-            $ head -n -10 achievements.log
+            <GlitchText intensity="low">$ head -n -10 achievements.log</GlitchText>
           </motion.div>
         </motion.div>
 
@@ -281,7 +282,7 @@ function AchievementLine({
             color: part.isCompetition ? '#ff0033' : '#c8c8c8',
           }}
         >
-          {part.text}
+          <GlitchText intensity="low">{part.text}</GlitchText>
         </span>
       ));
     }
@@ -295,7 +296,7 @@ function AchievementLine({
           color: part.isCompetition ? '#ff0033' : '#c8c8c8',
         }}
       >
-        {part.text}
+        <GlitchText intensity="low">{part.text}</GlitchText>
       </span>
     ));
   };
@@ -309,7 +310,7 @@ function AchievementLine({
         letterSpacing: '0.02em',
       }}
     >
-      <span style={{ color: '#c8c8c8' }}>[{achievement.timestamp}]</span>{' '}
+      <span style={{ color: '#c8c8c8' }}><GlitchText intensity="low">{`[${achievement.timestamp}]`}</GlitchText></span>{' '}
       {renderText(shouldType && !reducedMotion ? displayedText : achievement.entry)}
       {isTyping && !reducedMotion && (
         <span

@@ -9,7 +9,41 @@ interface Film {
   title: string;
   year: number;
   director: string;
+  date?: string;
   note: string;
+  tags?: string[];
+}
+
+// Typing effect hook with reduced motion support
+function useTypingEffect(text: string, speed: number = 50, enabled: boolean = true) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+
+  useEffect(() => {
+    if (!enabled) {
+      setDisplayedText(text);
+      setIsTyping(false);
+      return;
+    }
+
+    let currentIndex = 0;
+    setDisplayedText('');
+    setIsTyping(true);
+
+    const interval = setInterval(() => {
+      if (currentIndex < text.length) {
+        setDisplayedText(text.slice(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        setIsTyping(false);
+        clearInterval(interval);
+      }
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text, speed, enabled]);
+
+  return { displayedText, isTyping };
 }
 
 // Convert title to UPPER_SNAKE_CASE
@@ -20,10 +54,14 @@ function toSnakeCase(title: string): string {
     .replace(/\s+/g, '_');
 }
 
-// Generate consistent timestamp for a film (based on title + year hash)
-function generateTimestamp(year: number, title: string): string {
+// Generate consistent timestamp for a film (use date if available, otherwise generate)
+function generateTimestamp(film: Film): string {
+  if (film.date) {
+    return film.date;
+  }
+  
   // Create a simple hash from title + year for consistent month/day
-  const hash = (title + year).split('').reduce((acc, char) => {
+  const hash = (film.title + film.year).split('').reduce((acc, char) => {
     return ((acc << 5) - acc) + char.charCodeAt(0);
   }, 0);
   
@@ -31,52 +69,7 @@ function generateTimestamp(year: number, title: string): string {
   const month = Math.abs(hash % 12) + 1;
   const day = Math.abs(hash % 28) + 1;
   
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-// Character-by-character decrypt animation component
-function DecryptText({ 
-  text, 
-  delay = 0, 
-  speed = 50,
-  className = '' 
-}: { 
-  text: string; 
-  delay?: number; 
-  speed?: number;
-  className?: string;
-}) {
-  const [displayed, setDisplayed] = useState('');
-  const reducedMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (reducedMotion) {
-      setDisplayed(text);
-      return;
-    }
-
-    setDisplayed('');
-    
-    const timeout = setTimeout(() => {
-      let currentIndex = 0;
-      const interval = setInterval(() => {
-        if (currentIndex < text.length) {
-          setDisplayed(text.slice(0, currentIndex + 1));
-          currentIndex++;
-        } else {
-          clearInterval(interval);
-        }
-      }, speed);
-
-      return () => clearInterval(interval);
-    }, delay);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [text, delay, speed, reducedMotion]);
-
-  return <span className={className}>{displayed}</span>;
+  return `${film.year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 export default function Films() {
@@ -88,40 +81,6 @@ export default function Films() {
   const [grepFilter, setGrepFilter] = useState<string | null>(null);
   const [userInput, setUserInput] = useState('');
   const sectionRef = useRef<HTMLElement>(null);
-
-  // Generate tags from director and note (simplified)
-  function generateTags(film: Film): string[] {
-    const tags: string[] = [];
-    
-    // Extract genre hints from note
-    if (film.note.toLowerCase().includes('melanchol') || film.note.toLowerCase().includes('longing')) {
-      tags.push('melancholy');
-    }
-    if (film.note.toLowerCase().includes('silence') || film.note.toLowerCase().includes('form')) {
-      tags.push('contemplative');
-    }
-    if (film.note.toLowerCase().includes('faith') || film.note.toLowerCase().includes('truth')) {
-      tags.push('philosophical');
-    }
-    
-    // Region hints from director
-    if (film.director.includes('Tarkovsky') || film.director.includes('Kieślowski')) {
-      tags.push('eastern_europe');
-    }
-    if (film.director.includes('Wong') || film.director.includes('Suzuki')) {
-      tags.push('asia');
-    }
-    if (film.director.includes('Manchevski')) {
-      tags.push('balkans');
-    }
-    
-    // Default tag
-    if (tags.length === 0) {
-      tags.push('drama');
-    }
-    
-    return tags;
-  }
 
   // Filter films based on grep
   const filteredFilms = grepFilter 
@@ -187,273 +146,290 @@ export default function Films() {
     setFocusedIndex(index);
   }, []);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: reducedMotion ? 0 : 0.25,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: reducedMotion ? 0.01 : 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center px-8 py-24"
-      style={{ backgroundColor: '#0a0a0a' }}
+      className="relative min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-20 py-24 overflow-hidden"
+      style={{ backgroundColor: '#080808' }}
     >
-      <div className="w-full" style={{ maxWidth: '780px' }}>
-        {/* Section Header */}
+      {/* Scanline overlay - same as achievements */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `repeating-linear-gradient(
+            0deg,
+            rgba(200, 200, 200, 0.015) 0px,
+            transparent 1px,
+            transparent 2px
+          )`,
+          opacity: 0.5,
+        }}
+      />
+
+      <div className="relative z-10 max-w-4xl w-full">
         <motion.div
           ref={ref}
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: reducedMotion ? 0 : 0.6 }}
+          transition={{ duration: reducedMotion ? 0.01 : 0.6 }}
           className="mb-8"
         >
-          <h2 
-            className="text-sm mb-2"
+          {/* Access level meta */}
+          <div
+            className="text-xs md:text-sm font-mono mb-4"
             style={{
-              fontFamily: 'var(--font-share-tech-mono), "OCR-A Extended", monospace',
-              color: '#e5e5e5',
+              fontFamily: "'IBM Plex Mono', monospace",
+              color: '#888888',
+              letterSpacing: '0.02em',
+            }}
+          >
+            [ACCESS LEVEL: restricted]
+          </div>
+
+          {/* Section header */}
+          <div
+            className="text-sm md:text-base font-mono mb-4"
+            style={{
+              fontFamily: "'OCR-A Extended', 'IBM Plex Mono', monospace",
+              color: '#c8c8c8',
               letterSpacing: '0.04em',
             }}
           >
-            {reducedMotion ? '> cinema.log' : (
-              <DecryptText text="> cinema.log" delay={0} speed={45} />
-            )}
-          </h2>
-          
-          <div 
-            className="text-xs mb-4"
-            style={{
-              fontFamily: 'var(--font-ibm-plex-mono), monospace',
-              color: '#666',
-            }}
-          >
-            {reducedMotion ? '[ACCESS LEVEL: restricted]' : (
-              <DecryptText text="[ACCESS LEVEL: restricted]" delay={200} speed={40} />
-            )}
+            &gt; cinema.log
           </div>
 
-          <div 
-            className="text-xs mb-8"
+          {/* Terminal command */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ delay: reducedMotion ? 0 : 0.3, duration: reducedMotion ? 0.01 : 0.6 }}
+            className="text-xs md:text-sm font-mono mb-6"
             style={{
-              fontFamily: 'var(--font-ibm-plex-mono), monospace',
-              color: '#666',
+              fontFamily: "'IBM Plex Mono', monospace",
+              color: '#888888',
+              letterSpacing: '0.02em',
             }}
           >
-            {reducedMotion ? '$ tail -5 /mnt/memory/letterboxd.log' : (
-              <DecryptText text="$ tail -5 /mnt/memory/letterboxd.log" delay={400} speed={40} />
-            )}
-          </div>
+            $ tail -5 /mnt/memory/letterboxd.log
+          </motion.div>
         </motion.div>
 
         {/* Films List */}
-        <div className="space-y-1">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="space-y-1 font-mono text-xs md:text-sm"
+          style={{
+            fontFamily: "'OCR-A Extended', 'IBM Plex Mono', monospace",
+          }}
+        >
           {filteredFilms.map((film: Film, index: number) => {
-            const timestamp = generateTimestamp(film.year, film.title);
+            const timestamp = generateTimestamp(film);
             const titleSnake = toSnakeCase(film.title);
             const isExpanded = expandedIndex === index;
             const isFocused = focusedIndex === index;
-            const tags = generateTags(film);
-            const lineDelay = 600 + index * 120;
+            const typingSpeed = reducedMotion ? 0 : 50;
+            const shouldType = !reducedMotion && index < 3; // Only type first 3 entries
 
             return (
-              <div key={film.id}>
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={isInView ? { opacity: 1 } : {}}
-                  transition={{ 
-                    delay: reducedMotion ? 0 : lineDelay / 1000,
-                    duration: reducedMotion ? 0 : 0.3 
-                  }}
-                  onClick={() => handleEntryClick(index)}
-                  onFocus={() => setFocusedIndex(index)}
-                  onBlur={() => {
-                    // Don't clear focus on blur, let keyboard handle it
-                  }}
-                  className="w-full text-left py-2 px-0 focus:outline-none focus:ring-2 focus:ring-[#00b8b8] focus:ring-offset-2 focus:ring-offset-[#0a0a0a] transition-all"
-                  style={{
-                    fontFamily: 'var(--font-ibm-plex-mono), monospace',
-                    fontSize: '1rem',
-                    lineHeight: '1.6',
-                  }}
-                  aria-expanded={isExpanded}
-                  aria-label={`Film entry: ${film.title} ${film.year}`}
-                >
-                  <FilmEntryLine
-                    timestamp={timestamp}
-                    title={titleSnake}
-                    year={film.year}
-                    note={film.note}
-                    isFocused={isFocused}
-                    reducedMotion={reducedMotion}
-                    delay={lineDelay}
-                  />
-                </motion.button>
-
-                {/* Expanded detail */}
-                {isExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: reducedMotion ? 0 : 0.2 }}
-                    className="ml-0 pl-0 py-1"
-                    style={{
-                      fontFamily: 'var(--font-ibm-plex-mono), monospace',
-                      fontSize: '0.875rem',
-                      color: '#b45a5a',
-                    }}
-                  >
-                    tags:[{tags.map(tag => `[${tag}]`).join(' ')}]
-                  </motion.div>
-                )}
-              </div>
+              <FilmLine
+                key={film.id}
+                film={film}
+                timestamp={timestamp}
+                titleSnake={titleSnake}
+                index={index}
+                variants={itemVariants}
+                typingSpeed={typingSpeed}
+                shouldType={shouldType}
+                reducedMotion={reducedMotion}
+                isExpanded={isExpanded}
+                isFocused={isFocused}
+                onClick={() => handleEntryClick(index)}
+                onFocus={() => setFocusedIndex(index)}
+              />
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
 
-// Film entry line component with hover effects
-function FilmEntryLine({
+function FilmLine({
+  film,
   timestamp,
-  title,
-  year,
-  note,
-  isFocused,
+  titleSnake,
+  index,
+  variants,
+  typingSpeed,
+  shouldType,
   reducedMotion,
-  delay,
+  isExpanded,
+  isFocused,
+  onClick,
+  onFocus,
 }: {
+  film: Film;
   timestamp: string;
-  title: string;
-  year: number;
-  note: string;
-  isFocused: boolean;
+  titleSnake: string;
+  index: number;
+  variants: any;
+  typingSpeed: number;
+  shouldType: boolean;
   reducedMotion: boolean;
-  delay: number;
+  isExpanded: boolean;
+  isFocused: boolean;
+  onClick: () => void;
+  onFocus: () => void;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [showChromatic, setShowChromatic] = useState(false);
-  const [yearFlash, setYearFlash] = useState(false);
-  const [yearStabilized, setYearStabilized] = useState(false);
-  const [displayedLength, setDisplayedLength] = useState(0);
+  // Build the entry line: TITLE_IN_SNAKE_CASE — note (dir. Director)
+  const fullEntry = `${titleSnake} — ${film.note} (dir. ${film.director})`;
+  const { displayedText, isTyping } = useTypingEffect(
+    fullEntry,
+    typingSpeed,
+    shouldType && !reducedMotion
+  );
 
-  // Extract year from timestamp (first 4 digits)
-  const yearStr = timestamp.substring(0, 4);
-  const restOfTimestamp = timestamp.substring(4);
-  
-  // Build the full line for decrypt
-  const fullLine = `[${timestamp}] ${title} — ${note}`;
-  const totalLength = fullLine.length;
+  const displayText = shouldType && !reducedMotion ? displayedText : fullEntry;
 
-  // Decrypt animation
-  useEffect(() => {
-    if (reducedMotion) {
-      setDisplayedLength(totalLength);
-      return;
+  // Parse the displayed text to style different parts
+  const parseDisplayText = (text: string) => {
+    const parts: Array<{ text: string; type: 'title' | 'divider' | 'note' | 'director' }> = [];
+    
+    // Find title (everything before " — ")
+    const dividerIndex = text.indexOf(' — ');
+    if (dividerIndex === -1) {
+      // Still typing title
+      parts.push({ text, type: 'title' });
+      return parts;
     }
 
-    setDisplayedLength(0);
-    const timeout = setTimeout(() => {
-      let current = 0;
-      const interval = setInterval(() => {
-        if (current < totalLength) {
-          setDisplayedLength(current + 1);
-          current++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 50);
+    const title = text.substring(0, dividerIndex);
+    parts.push({ text: title, type: 'title' });
+    parts.push({ text: ' — ', type: 'divider' });
 
-      return () => clearInterval(interval);
-    }, delay);
+    // Find note and director
+    const rest = text.substring(dividerIndex + 3);
+    const dirIndex = rest.indexOf(' (dir. ');
+    
+    if (dirIndex === -1) {
+      // Still typing note
+      parts.push({ text: rest, type: 'note' });
+      return parts;
+    }
 
-    return () => clearTimeout(timeout);
-  }, [delay, totalLength, reducedMotion]);
+    const note = rest.substring(0, dirIndex);
+    const directorPart = rest.substring(dirIndex);
+    
+    parts.push({ text: note, type: 'note' });
+    
+    // Parse director part: " (dir. Name)"
+    const dirMatch = directorPart.match(/^ \(dir\. (.+)\)$/);
+    if (dirMatch) {
+      parts.push({ text: ' (dir. ', type: 'director' });
+      parts.push({ text: dirMatch[1], type: 'director' });
+      parts.push({ text: ')', type: 'director' });
+    } else {
+      parts.push({ text: directorPart, type: 'director' });
+    }
 
-  // Parse the displayed portion to extract parts with proper styling
-  const displayedText = fullLine.substring(0, displayedLength);
-  
-  // Find positions of each part in the full line
-  const timestampEnd = `[${timestamp}]`.length;
-  const titleStart = timestampEnd + 1; // +1 for space
-  const titleEnd = titleStart + title.length;
-  const dividerStart = titleEnd;
-  const dividerEnd = dividerStart + 3; // " — "
-  const noteStart = dividerEnd;
+    return parts;
+  };
+
+  const parts = parseDisplayText(displayText);
 
   return (
-    <div
-      onMouseEnter={() => {
-        setIsHovered(true);
-        if (!reducedMotion) {
-          setShowChromatic(true);
-          setYearFlash(true);
-          setTimeout(() => {
-            setShowChromatic(false);
-            setYearFlash(false);
-            setYearStabilized(true);
-          }, 200);
-        } else {
-          setYearStabilized(true);
-        }
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setYearStabilized(false);
-      }}
-      className="relative"
+    <motion.div
+      variants={variants}
+      className="leading-tight"
     >
-      {/* Render with proper styling based on position */}
-      {displayedText.split('').map((char, index) => {
-        // Determine which part this character belongs to
-        let color = '#666';
-        let fontFamily = 'var(--font-ibm-plex-mono), monospace';
-        let letterSpacing = 'normal';
-        let fontStyle = 'normal';
-        let className = '';
-        
-        if (index < timestampEnd) {
-          // Timestamp part
-          color = '#666';
-          // Check if this is the year part (characters 1-4 after the bracket)
-          if (index >= 1 && index <= 4) {
-            // Flash cyan on hover, then stabilize to cyan
-            if (isHovered && (yearFlash || yearStabilized)) {
-              color = '#00b8b8';
-            } else {
-              color = '#666';
-            }
+      <button
+        onClick={onClick}
+        onFocus={onFocus}
+        className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#00b8b8] focus:ring-offset-2 focus:ring-offset-[#080808] transition-all"
+        aria-expanded={isExpanded}
+        aria-label={`Film entry: ${film.title} ${film.year}`}
+      >
+        <span style={{ color: '#c8c8c8' }}>[{timestamp}]</span>{' '}
+        {parts.map((part, partIndex) => {
+          let color = '#c8c8c8';
+          let fontStyle = 'normal';
+
+          if (part.type === 'title') {
+            color = '#c8c8c8';
+          } else if (part.type === 'divider') {
+            color = '#00b8b8';
+          } else if (part.type === 'note') {
+            color = '#c8c8c8';
+            fontStyle = 'italic';
+          } else if (part.type === 'director') {
+            color = '#888888';
           }
-        } else if (index >= titleStart && index < titleEnd) {
-          // Title part
-          color = '#e5e5e5';
-          fontFamily = 'var(--font-share-tech-mono), "OCR-A Extended", monospace';
-          letterSpacing = '0.04em';
-        } else if (index >= dividerStart && index < dividerEnd) {
-          // Divider part
-          color = '#00b8b8';
-        } else if (index >= noteStart) {
-          // Note part
-          color = '#b45a5a';
-          fontStyle = 'italic';
-          if (showChromatic) {
-            className = 'chromatic-aberration-hover';
-          }
-        }
-        
-        return (
+
+          return (
+            <span
+              key={partIndex}
+              style={{
+                color,
+                fontStyle,
+                letterSpacing: '0.02em',
+              }}
+            >
+              {part.text}
+            </span>
+          );
+        })}
+        {isTyping && !reducedMotion && (
           <span
-            key={index}
+            className="inline-block w-[2px] h-[1em] ml-[3px] align-baseline"
             style={{
-              color,
-              fontFamily,
-              letterSpacing,
-              fontStyle,
-              transition: reducedMotion ? 'none' : 'color 0.2s ease',
+              background: '#00ffd5',
+              animation: 'cursor-blink 1s step-end infinite',
             }}
-            className={className}
-          >
-            {char}
-          </span>
-        );
-      })}
-    </div>
+          />
+        )}
+      </button>
+
+      {/* Expanded detail */}
+      {isExpanded && film.tags && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: reducedMotion ? 0.01 : 0.2 }}
+          className="ml-0 pl-0 py-1 text-xs"
+          style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            color: '#888888',
+            letterSpacing: '0.02em',
+          }}
+        >
+          tags:[{film.tags.map(tag => `[${tag}]`).join(' ')}]
+        </motion.div>
+      )}
+    </motion.div>
   );
 }

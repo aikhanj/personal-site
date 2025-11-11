@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import GlitchText from "./GlitchText";
 
 const titleVariants = ["> khan/", "/usr/bin/khan"];
 
@@ -66,7 +67,7 @@ export default function Hero() {
               transition: "transform 0.1s ease-out",
             }}
           >
-            {titleVariant}
+            <GlitchText intensity="low" initialScramble={true} initialScrambleDuration={600}>{titleVariant}</GlitchText>
           </motion.div>
 
           {/* Metadata line */}
@@ -77,7 +78,7 @@ export default function Hero() {
               transition={{ duration: 0.5 }}
               className="hero-metadata"
             >
-              [domain: municipal-ai] [focus: film, systems, change]
+              <GlitchText intensity="low" initialScramble={true} initialScrambleDuration={500}>[domain: municipal-ai] [focus: film, systems, change]</GlitchText>
             </motion.div>
           )}
         </div>
@@ -91,7 +92,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="absolute bottom-20 right-6 md:right-12 lg:right-20 hero-quote text-right max-w-md"
         >
-          Неправильный не я. <br /> Неправильный весь этот мир.
+          <GlitchText intensity="high" randomGlitchInterval={2000} initialScramble={true} initialScrambleDuration={700}>Неправильный не я.</GlitchText> <br /> <GlitchText intensity="high" randomGlitchInterval={2000} initialScramble={true} initialScrambleDuration={700}>Неправильный весь этот мир.</GlitchText>
         </motion.div>
       )}
     </section>

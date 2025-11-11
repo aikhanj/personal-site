@@ -4,34 +4,44 @@
     "title": "Before the Rain",
     "year": 1994,
     "director": "Milcho Manchevski",
-    "note": "form over plot. silence wins."
+    "date": "1994-09-12",
+    "note": "form over plot. silence wins.",
+    "tags": ["war", "balkan", "memory"]
   },
   {
-    "id": "short-film-love",
+    "id": "a-short-film-about-love",
     "title": "A Short Film About Love",
     "year": 1988,
     "director": "Krzysztof Kieślowski",
-    "note": "glass and longing."
+    "date": "1988-03-08",
+    "note": "glass and longing.",
+    "tags": ["desire", "voyeurism", "poland"]
   },
   {
-    "id": "stalker",
-    "title": "Stalker",
-    "year": 1979,
-    "director": "Andrei Tarkovsky",
-    "note": "faith in ruins. truth requires sacrifice."
-  },
-  {
-    "id": "fallen-angels",
-    "title": "Fallen Angels",
-    "year": 1995,
-    "director": "Wong Kar-wai",
-    "note": "neon isolation. beauty in disconnection."
-  },
-  {
-    "id": "tokyo-drifter",
-    "title": "Tokyo Drifter",
+    "id": "closely-watched-trains",
+    "title": "Closely Watched Trains",
     "year": 1966,
-    "director": "Seijun Suzuki",
-    "note": "color as violence. style as substance."
+    "director": "Jiří Menzel",
+    "date": "1966-10-05",
+    "note": "masculinity under pressure.",
+    "tags": ["czech", "war", "masculinity"]
+  },
+  {
+    "id": "knife-in-the-water",
+    "title": "Knife in the Water",
+    "year": 1962,
+    "director": "Roman Polanski",
+    "date": "1962-09-09",
+    "note": "dominance disguised as civility.",
+    "tags": ["psychological", "power", "isolation"]
+  },
+  {
+    "id": "solaris",
+    "title": "Solaris",
+    "year": 1972,
+    "director": "Andrei Tarkovsky",
+    "date": "1972-03-20",
+    "note": "grief with gravity. science haunted by love.",
+    "tags": ["sci-fi", "memory", "space"]
   }
 ]
