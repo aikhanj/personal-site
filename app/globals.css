@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --black: #000000;
+  --black: #080808;
   --crimson: #ff0033;
   --cyan: #00ffd5;
   --text: #d0d0d0;
@@ -18,7 +18,7 @@
 }
 
 body {
-  background: var(--black);
+  background: #080808;
   color: var(--text);
   font-family: 'JetBrains Mono', monospace;
   overflow-x: hidden;
@@ -51,10 +51,10 @@ html {
   height: 200%;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.08) 0px,
     transparent 1px,
     transparent 2px,
-    rgba(0, 0, 0, 0.15) 3px
+    rgba(0, 0, 0, 0.08) 3px
   );
   pointer-events: none;
   animation: scanline 8s linear infinite;
@@ -233,11 +233,12 @@ html {
 /* Terminal Cursor */
 .terminal-cursor {
   display: inline-block;
-  width: 10px;
+  width: 2px;
   height: 1em;
-  background: var(--crimson);
+  background: var(--text);
   animation: cursor-blink 1s step-end infinite;
-  margin-left: 2px;
+  margin-left: 3px;
+  vertical-align: baseline;
 }
 
 @keyframes cursor-blink {
@@ -247,6 +248,28 @@ html {
   51%, 100% {
     opacity: 0;
   }
+}
+
+/* Chromatic Aberration - subtle red/cyan offset using text-shadow */
+.chromatic-aberration {
+  text-shadow: 
+    1px 0 0 rgba(255, 0, 51, 0.3),
+    -1px 0 0 rgba(0, 255, 213, 0.3);
+}
+
+/* Subtle chromatic aberration for quote */
+.chromatic-aberration-subtle {
+  text-shadow: 
+    1px 0 0 rgba(255, 0, 51, 0.15),
+    -1px 0 0 rgba(0, 255, 213, 0.15);
+}
+
+/* Chromatic aberration hover effect for film entries */
+.chromatic-aberration-hover {
+  text-shadow: 
+    1px 0 0 rgba(255, 0, 0, 0.4),
+    -1px 0 0 rgba(0, 184, 184, 0.4);
+  transition: text-shadow 0.2s ease;
 }
 
 /* Neon Glow Effects */
@@ -420,4 +443,52 @@ html {
 ::-moz-selection {
   background: var(--crimson);
   color: var(--black);
+}
+
+/* Terminal Hero Styles */
+.terminal-hero {
+  background: #080808;
+}
+
+/* Hero Title - terminal artifact style */
+.hero-title {
+  font-family: 'OCR-A Extended', var(--font-ibm-plex-mono, 'IBM Plex Mono'), 'IBM Plex Mono', monospace;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 500;
+  color: #c8c8c8;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  /* 1px RGB chromatic aberration (cyan/red) */
+  text-shadow: 
+    1px 0 0 rgba(0, 255, 255, 0.4),
+    -1px 0 0 rgba(255, 0, 0, 0.4);
+  /* Remove all glow and heavy drop shadows */
+  filter: none;
+}
+
+/* Hero Metadata */
+.hero-metadata {
+  font-family: var(--font-ibm-plex-mono, 'IBM Plex Mono'), 'IBM Plex Mono', monospace;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-weight: 400;
+  color: #888888;
+  letter-spacing: 0.02em;
+}
+
+/* Hero Quote */
+.hero-quote {
+  font-family: var(--font-ibm-plex-mono, 'IBM Plex Mono'), 'IBM Plex Mono', monospace;
+  font-size: clamp(0.875rem, 1.8vw, 1rem);
+  font-weight: 400;
+  font-style: italic;
+  color: #888888;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+/* Ensure OCR-A Extended font is available via fallback */
+@supports (font-family: 'OCR-A Extended') {
+  .hero-title {
+    font-family: 'OCR-A Extended', var(--font-ibm-plex-mono), monospace;
+  }
 }

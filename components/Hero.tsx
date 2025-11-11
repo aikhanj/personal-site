@@ -2,103 +2,98 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import GlitchText from "./GlitchText";
+
+const titleVariants = ["> khan/", "/usr/bin/khan"];
 
 export default function Hero() {
-  const [glitchTrigger, setGlitchTrigger] = useState(false);
+  // Randomly select title variant on mount using lazy initializer
+  const [titleVariant] = useState<string>(() => 
+    titleVariants[Math.floor(Math.random() * titleVariants.length)]
+  );
+  const [showMetadata, setShowMetadata] = useState(false);
+  const [showQuote, setShowQuote] = useState(false);
+  const [jitterOffset, setJitterOffset] = useState(0);
 
   useEffect(() => {
-    // Trigger glitch periodically
-    const interval = setInterval(() => {
-      setGlitchTrigger(true);
-      setTimeout(() => setGlitchTrigger(false), 100);
-    }, 3000);
 
-    return () => clearInterval(interval);
+    // Show metadata after a short delay
+    const timer1 = setTimeout(() => setShowMetadata(true), 400);
+    
+    // Show quote last, after longer delay
+    const timer2 = setTimeout(() => setShowQuote(true), 1200);
+
+    // Subtle vertical jitter every 6-8 seconds
+    const jitterInterval = setInterval(() => {
+      const offset = Math.random() < 0.5 ? 1 : 2;
+      setJitterOffset(offset);
+      setTimeout(() => setJitterOffset(0), 100);
+    }, 7000 + Math.random() * 1000); // Random between 7-8 seconds
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearInterval(jitterInterval);
+    };
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* CRT Background Effects */}
-      <div className="absolute inset-0">
-        {/* Flickering CRT Reflections */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{
-            opacity: [0.05, 0.08, 0.05],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(255, 0, 51, 0.1) 0%, rgba(0, 255, 213, 0.1) 100%)",
-          }}
-        />
-      </div>
-
-      {/* Hero Content */}
-      <div className="relative z-10 text-center px-4">
-        {/* Glitching AIKHAN */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-6"
-        >
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight">
-            <GlitchText
-              trigger={glitchTrigger}
-              intensity="high"
-              className="text-[#d0d0d0] drop-shadow-[0_0_20px_rgba(255,0,51,0.5)]"
-            >
-              AIKHAN
-            </GlitchText>
-          </h1>
-        </motion.div>
-
-        {/* Subheadline */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-8"
-        >
-          <p className="text-lg md:text-xl text-[#d0d0d0] font-light tracking-wider">
-            municipal ai · film · systems · change
-          </p>
-        </motion.div>
-
-        {/* Russian Quote */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="max-w-3xl mx-auto"
-        >
-          <p className="text-base md:text-lg text-[#d0d0d0] italic leading-relaxed">
-            "Неправильный не я. Неправильный весь этот мир..."
-          </p>
-        </motion.div>
-      </div>
-
-      {/* Moving Scanlines Overlay */}
+    <section className="relative min-h-screen overflow-hidden terminal-hero">
+      {/* Faint scanlines overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `repeating-linear-gradient(
             0deg,
-            rgba(0, 255, 213, 0.03) 0px,
-            rgba(0, 255, 213, 0.03) 1px,
+            rgba(200, 200, 200, 0.015) 0px,
             transparent 1px,
             transparent 2px
           )`,
-          animation: "scanline 10s linear infinite",
+          opacity: 0.5,
         }}
       />
+
+      {/* Main content - left-aligned, slightly low on screen */}
+      <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-[32vh]">
+        <div className="space-y-3">
+          {/* Title - terminal artifact style */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="hero-title"
+            style={{
+              transform: `translateY(${jitterOffset}px)`,
+              transition: "transform 0.1s ease-out",
+            }}
+          >
+            {titleVariant}
+          </motion.div>
+
+          {/* Metadata line */}
+          {showMetadata && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="hero-metadata"
+            >
+              [domain: municipal-ai] [focus: film, systems, change]
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      {/* Russian Quote - right-aligned, fades in last */}
+      {showQuote && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="absolute bottom-20 right-6 md:right-12 lg:right-20 hero-quote text-right max-w-md"
+        >
+          Неправильный не я. <br /> Неправильный весь этот мир.
+        </motion.div>
+      )}
     </section>
   );
 }
-

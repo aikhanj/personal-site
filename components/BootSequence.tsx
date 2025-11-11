@@ -131,7 +131,8 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[10001] bg-black flex items-center justify-center"
+          className="fixed inset-0 z-[10001] flex items-center justify-center"
+          style={{ backgroundColor: '#080808' }}
         >
           {/* White Noise Effect */}
           {showWhiteNoise && (

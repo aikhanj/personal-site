@@ -22,7 +22,7 @@ export default function Home() {
       </AnimatePresence>
 
       {!loading && (
-        <main className="relative bg-black">
+        <main className="relative" style={{ backgroundColor: '#080808' }}>
           <Hero />
           <Manifesto />
           <Achievements />

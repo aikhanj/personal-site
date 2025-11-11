@@ -1,72 +1,325 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import achievementsData from "@/data/achievements.json";
 
 interface Achievement {
   timestamp: string;
-  type: string;
-  title: string;
-  publication: string;
-  status: string;
+  entry: string;
+}
+
+// Typing effect hook with reduced motion support
+function useTypingEffect(text: string, speed: number = 50, enabled: boolean = true) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+
+  useEffect(() => {
+    if (!enabled) {
+      setDisplayedText(text);
+      setIsTyping(false);
+      return;
+    }
+
+    let currentIndex = 0;
+    setDisplayedText('');
+    setIsTyping(true);
+
+    const interval = setInterval(() => {
+      if (currentIndex < text.length) {
+        setDisplayedText(text.slice(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        setIsTyping(false);
+        clearInterval(interval);
+      }
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text, speed, enabled]);
+
+  return { displayedText, isTyping };
+}
+
+// Extract competition names and keywords from entry for accent coloring
+function parseEntry(entry: string): { parts: Array<{ text: string; isCompetition: boolean }> } {
+  // Keywords to highlight in red
+  const highlightPatterns = [
+    /math\.olympiad\([^)]+\)/g,
+    /math\.amc\d+/g,
+    /republic\.olympiad/g,
+    /crimson\.18u18\.global/g,
+    /inspirit\.ai/g,
+    /ikyrgyz\.project/g,
+    /research:/g,
+    /press:/g,
+  ];
+
+  const parts: Array<{ text: string; isCompetition: boolean }> = [];
+  let lastIndex = 0;
+  let foundMatches: Array<{ start: number; end: number }> = [];
+
+  highlightPatterns.forEach(pattern => {
+    const matches = entry.matchAll(pattern);
+    for (const match of matches) {
+      if (match.index !== undefined) {
+        foundMatches.push({ start: match.index, end: match.index + match[0].length });
+      }
+    }
+  });
+
+  // Sort matches by start position
+  foundMatches.sort((a, b) => a.start - b.start);
+
+  // Merge overlapping matches
+  const mergedMatches: Array<{ start: number; end: number }> = [];
+  for (const match of foundMatches) {
+    if (mergedMatches.length === 0 || mergedMatches[mergedMatches.length - 1].end < match.start) {
+      mergedMatches.push(match);
+    } else {
+      mergedMatches[mergedMatches.length - 1].end = Math.max(
+        mergedMatches[mergedMatches.length - 1].end,
+        match.end
+      );
+    }
+  }
+
+  // Build parts array
+  for (const match of mergedMatches) {
+    if (match.start > lastIndex) {
+      parts.push({ text: entry.slice(lastIndex, match.start), isCompetition: false });
+    }
+    parts.push({ text: entry.slice(match.start, match.end), isCompetition: true });
+    lastIndex = match.end;
+  }
+
+  if (lastIndex < entry.length) {
+    parts.push({ text: entry.slice(lastIndex), isCompetition: false });
+  }
+
+  // If no matches found, return entire entry as single part
+  if (parts.length === 0) {
+    parts.push({ text: entry, isCompetition: false });
+  }
+
+  return { parts };
 }
 
 export default function Achievements() {
-  const [visibleItems, setVisibleItems] = useState<number[]>([]);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Decryption fade-in effect
-    achievementsData.forEach((_, index) => {
-      setTimeout(() => {
-        setVisibleItems((prev) => [...prev, index]);
-      }, index * 200);
-    });
+    // Check for prefers-reduced-motion
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 py-20">
-      <div className="max-w-4xl w-full">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl font-bold mb-12 text-[#d0d0d0] tracking-tight"
-        >
-          achievements
-        </motion.h2>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: reducedMotion ? 0 : 0.25,
+        delayChildren: 0.2,
+      },
+    },
+  };
 
-        <div className="space-y-4 font-mono">
-          {achievementsData.map((achievement: Achievement, index: number) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={
-                visibleItems.includes(index)
-                  ? { opacity: 1, x: 0 }
-                  : { opacity: 0, x: -20 }
-              }
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-sm md:text-base text-[#d0d0d0]"
-            >
-              <span className="text-[#00ffd5]">[</span>
-              <span className="text-[#d0d0d0]">{achievement.timestamp}</span>
-              <span className="text-[#00ffd5]">]</span>{" "}
-              <span className="text-[#ff0033]">{achievement.type}</span>
-              {": "}
-              <span className="text-[#d0d0d0]">{achievement.title}</span>
-              {achievement.publication && (
-                <>
-                  {" – "}
-                  <span className="text-[#00ffd5]">{achievement.publication}</span>
-                </>
-              )}
-            </motion.div>
-          ))}
-        </div>
+  const itemVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: reducedMotion ? 0.01 : 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  return (
+    <section
+      ref={ref}
+      className="relative min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-20 py-24 overflow-hidden"
+      style={{ backgroundColor: '#080808' }}
+    >
+      {/* Scanline overlay - same as hero */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `repeating-linear-gradient(
+            0deg,
+            rgba(200, 200, 200, 0.015) 0px,
+            transparent 1px,
+            transparent 2px
+          )`,
+          opacity: 0.5,
+        }}
+      />
+
+      <div className="relative z-10 max-w-4xl w-full">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: reducedMotion ? 0.01 : 0.6 }}
+          className="mb-8"
+        >
+          {/* Access level meta */}
+          <div
+            className="text-xs md:text-sm font-mono mb-4"
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              color: '#888888',
+              letterSpacing: '0.02em',
+            }}
+          >
+            [ACCESS LEVEL: public]
+          </div>
+
+          {/* Section header */}
+          <div
+            className="text-sm md:text-base font-mono mb-4"
+            style={{
+              fontFamily: "'OCR-A Extended', 'IBM Plex Mono', monospace",
+              color: '#c8c8c8',
+              letterSpacing: '0.04em',
+            }}
+          >
+            &gt; achievements.log
+          </div>
+
+          {/* Terminal command */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ delay: reducedMotion ? 0 : 0.3, duration: reducedMotion ? 0.01 : 0.6 }}
+            className="text-xs md:text-sm font-mono mb-6"
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              color: '#888888',
+              letterSpacing: '0.02em',
+            }}
+          >
+            $ head -n -10 achievements.log
+          </motion.div>
+        </motion.div>
+
+        {/* Log entries */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="space-y-1 font-mono text-xs md:text-sm"
+          style={{
+            fontFamily: "'OCR-A Extended', 'IBM Plex Mono', monospace",
+          }}
+        >
+          {achievementsData.map((achievement: Achievement, index: number) => {
+            const { parts } = parseEntry(achievement.entry);
+            const typingSpeed = reducedMotion ? 0 : 50; // 50ms per char
+            const shouldType = !reducedMotion && index < 3; // Only type first 3 entries
+            
+            return (
+              <AchievementLine
+                key={achievement.timestamp}
+                achievement={achievement}
+                parts={parts}
+                index={index}
+                variants={itemVariants}
+                typingSpeed={typingSpeed}
+                shouldType={shouldType}
+                reducedMotion={reducedMotion}
+              />
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );
 }
 
+function AchievementLine({
+  achievement,
+  parts,
+  index,
+  variants,
+  typingSpeed,
+  shouldType,
+  reducedMotion,
+}: {
+  achievement: Achievement;
+  parts: Array<{ text: string; isCompetition: boolean }>;
+  index: number;
+  variants: any;
+  typingSpeed: number;
+  shouldType: boolean;
+  reducedMotion: boolean;
+}) {
+  const fullEntry = achievement.entry;
+  const { displayedText, isTyping } = useTypingEffect(
+    fullEntry,
+    typingSpeed,
+    shouldType && !reducedMotion
+  );
+
+  // Render text with competition highlighting
+  const renderText = (text: string) => {
+    if (!shouldType || reducedMotion) {
+      // Static rendering - use pre-parsed parts
+      return parts.map((part, partIndex) => (
+        <span
+          key={partIndex}
+          style={{
+            color: part.isCompetition ? '#ff0033' : '#c8c8c8',
+          }}
+        >
+          {part.text}
+        </span>
+      ));
+    }
+
+    // Typing effect - parse displayed text on the fly
+    const displayParts = parseEntry(displayedText);
+    return displayParts.parts.map((part, partIndex) => (
+      <span
+        key={partIndex}
+        style={{
+          color: part.isCompetition ? '#ff0033' : '#c8c8c8',
+        }}
+      >
+        {part.text}
+      </span>
+    ));
+  };
+
+  return (
+    <motion.div
+      variants={variants}
+      className="leading-tight"
+      style={{
+        color: '#c8c8c8',
+        letterSpacing: '0.02em',
+      }}
+    >
+      <span style={{ color: '#c8c8c8' }}>[{achievement.timestamp}]</span>{' '}
+      {renderText(shouldType && !reducedMotion ? displayedText : achievement.entry)}
+      {isTyping && !reducedMotion && (
+        <span
+          className="inline-block w-[2px] h-[1em] ml-[3px] align-baseline"
+          style={{
+            background: '#00ffd5',
+            animation: 'cursor-blink 1s step-end infinite',
+          }}
+        />
+      )}
+    </motion.div>
+  );
+}

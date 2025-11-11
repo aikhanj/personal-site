@@ -1,107 +1,459 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import filmsData from '@/data/films.json';
+
+interface Film {
+  id: string;
+  title: string;
+  year: number;
+  director: string;
+  note: string;
+}
+
+// Convert title to UPPER_SNAKE_CASE
+function toSnakeCase(title: string): string {
+  return title
+    .toUpperCase()
+    .replace(/[^A-Z0-9\s]/g, '')
+    .replace(/\s+/g, '_');
+}
+
+// Generate consistent timestamp for a film (based on title + year hash)
+function generateTimestamp(year: number, title: string): string {
+  // Create a simple hash from title + year for consistent month/day
+  const hash = (title + year).split('').reduce((acc, char) => {
+    return ((acc << 5) - acc) + char.charCodeAt(0);
+  }, 0);
+  
+  // Map hash to month (1-12) and day (1-28 for consistency)
+  const month = Math.abs(hash % 12) + 1;
+  const day = Math.abs(hash % 28) + 1;
+  
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+// Character-by-character decrypt animation component
+function DecryptText({ 
+  text, 
+  delay = 0, 
+  speed = 50,
+  className = '' 
+}: { 
+  text: string; 
+  delay?: number; 
+  speed?: number;
+  className?: string;
+}) {
+  const [displayed, setDisplayed] = useState('');
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setDisplayed(text);
+      return;
+    }
+
+    setDisplayed('');
+    
+    const timeout = setTimeout(() => {
+      let currentIndex = 0;
+      const interval = setInterval(() => {
+        if (currentIndex < text.length) {
+          setDisplayed(text.slice(0, currentIndex + 1));
+          currentIndex++;
+        } else {
+          clearInterval(interval);
+        }
+      }, speed);
+
+      return () => clearInterval(interval);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [text, delay, speed, reducedMotion]);
+
+  return <span className={className}>{displayed}</span>;
+}
 
 export default function Films() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const reducedMotion = useReducedMotion();
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [grepFilter, setGrepFilter] = useState<string | null>(null);
+  const [userInput, setUserInput] = useState('');
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Generate tags from director and note (simplified)
+  function generateTags(film: Film): string[] {
+    const tags: string[] = [];
+    
+    // Extract genre hints from note
+    if (film.note.toLowerCase().includes('melanchol') || film.note.toLowerCase().includes('longing')) {
+      tags.push('melancholy');
+    }
+    if (film.note.toLowerCase().includes('silence') || film.note.toLowerCase().includes('form')) {
+      tags.push('contemplative');
+    }
+    if (film.note.toLowerCase().includes('faith') || film.note.toLowerCase().includes('truth')) {
+      tags.push('philosophical');
+    }
+    
+    // Region hints from director
+    if (film.director.includes('Tarkovsky') || film.director.includes('Kieślowski')) {
+      tags.push('eastern_europe');
+    }
+    if (film.director.includes('Wong') || film.director.includes('Suzuki')) {
+      tags.push('asia');
+    }
+    if (film.director.includes('Manchevski')) {
+      tags.push('balkans');
+    }
+    
+    // Default tag
+    if (tags.length === 0) {
+      tags.push('drama');
+    }
+    
+    return tags;
+  }
+
+  // Filter films based on grep
+  const filteredFilms = grepFilter 
+    ? filmsData.filter(film => film.note.toLowerCase().includes(grepFilter.toLowerCase()))
+    : filmsData;
+
+  // Reset focus when filter changes
+  useEffect(() => {
+    if (grepFilter && focusedIndex !== null) {
+      setFocusedIndex(null);
+      setExpandedIndex(null);
+    }
+  }, [grepFilter]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if user is typing "grep faith"
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+        setUserInput(prev => {
+          const newInput = (prev + e.key).slice(-20); // Keep last 20 chars
+          if (newInput.toLowerCase().includes('grep faith')) {
+            setGrepFilter('faith');
+            setTimeout(() => setGrepFilter(null), 5000); // Clear after 5s
+            return '';
+          }
+          return newInput;
+        });
+      }
+
+      // Only handle navigation if section is focused or in view
+      if (!isInView) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setFocusedIndex(prev => {
+          const next = prev === null ? 0 : Math.min(prev + 1, filteredFilms.length - 1);
+          return next;
+        });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setFocusedIndex(prev => {
+          const next = prev === null ? filteredFilms.length - 1 : Math.max(prev - 1, 0);
+          return next;
+        });
+      } else if (e.key === 'Enter' && focusedIndex !== null) {
+        e.preventDefault();
+        setExpandedIndex(prev => prev === focusedIndex ? null : focusedIndex);
+      } else if (e.key === 'Escape') {
+        setFocusedIndex(null);
+        setExpandedIndex(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isInView, focusedIndex, filteredFilms.length]);
+
+  const handleEntryClick = useCallback((index: number) => {
+    setExpandedIndex(prev => prev === index ? null : index);
+    setFocusedIndex(index);
+  }, []);
 
   return (
     <section
-      ref={ref}
+      ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center px-8 py-24"
+      style={{ backgroundColor: '#0a0a0a' }}
     >
-      <div className="max-w-4xl w-full">
+      <div className="w-full" style={{ maxWidth: '780px' }}>
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
+          ref={ref}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: reducedMotion ? 0 : 0.6 }}
+          className="mb-8"
         >
-          <h2 className="text-cyan text-sm md:text-base tracking-[0.3em] uppercase font-light mb-2">
-            {'>'} SYSTEM.cinema
+          <h2 
+            className="text-sm mb-2"
+            style={{
+              fontFamily: 'var(--font-share-tech-mono), "OCR-A Extended", monospace',
+              color: '#e5e5e5',
+              letterSpacing: '0.04em',
+            }}
+          >
+            {reducedMotion ? '> cinema.log' : (
+              <DecryptText text="> cinema.log" delay={0} speed={45} />
+            )}
           </h2>
-          <div className="h-px w-24 bg-cyan" />
+          
+          <div 
+            className="text-xs mb-4"
+            style={{
+              fontFamily: 'var(--font-ibm-plex-mono), monospace',
+              color: '#666',
+            }}
+          >
+            {reducedMotion ? '[ACCESS LEVEL: restricted]' : (
+              <DecryptText text="[ACCESS LEVEL: restricted]" delay={200} speed={40} />
+            )}
+          </div>
+
+          <div 
+            className="text-xs mb-8"
+            style={{
+              fontFamily: 'var(--font-ibm-plex-mono), monospace',
+              color: '#666',
+            }}
+          >
+            {reducedMotion ? '$ tail -5 /mnt/memory/letterboxd.log' : (
+              <DecryptText text="$ tail -5 /mnt/memory/letterboxd.log" delay={400} speed={40} />
+            )}
+          </div>
         </motion.div>
-
-        <motion.h3
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="text-3xl md:text-5xl font-bold mb-8 text-text"
-        >
-          encrypted notes
-        </motion.h3>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="text-text-dim text-sm md:text-base mb-16 max-w-2xl"
-        >
-          films that understand: form is function. silence is strategy. every
-          frame is a choice.
-        </motion.p>
 
         {/* Films List */}
-        <div className="space-y-6">
-          {filmsData.map((film, index) => (
-            <motion.div
-              key={film.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.6 + index * 0.1, duration: 0.6 }}
-              className="group border-l-2 border-text-dim/30 hover:border-crimson pl-6 py-4 transition-all duration-300 cursor-default"
-            >
-              {/* Film Header */}
-              <div className="flex items-baseline gap-3 mb-2">
-                <span className="text-cyan text-xs font-mono">{'>'}</span>
-                <h4 className="text-lg md:text-xl font-semibold text-text group-hover:text-crimson transition-colors">
-                  {film.title}
-                </h4>
-                <span className="text-text-dim text-sm">({film.year})</span>
-              </div>
+        <div className="space-y-1">
+          {filteredFilms.map((film: Film, index: number) => {
+            const timestamp = generateTimestamp(film.year, film.title);
+            const titleSnake = toSnakeCase(film.title);
+            const isExpanded = expandedIndex === index;
+            const isFocused = focusedIndex === index;
+            const tags = generateTags(film);
+            const lineDelay = 600 + index * 120;
 
-              {/* Director */}
-              <div className="text-text-dim text-xs md:text-sm mb-3 pl-5">
-                dir. {film.director}
-              </div>
+            return (
+              <div key={film.id}>
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={isInView ? { opacity: 1 } : {}}
+                  transition={{ 
+                    delay: reducedMotion ? 0 : lineDelay / 1000,
+                    duration: reducedMotion ? 0 : 0.3 
+                  }}
+                  onClick={() => handleEntryClick(index)}
+                  onFocus={() => setFocusedIndex(index)}
+                  onBlur={() => {
+                    // Don't clear focus on blur, let keyboard handle it
+                  }}
+                  className="w-full text-left py-2 px-0 focus:outline-none focus:ring-2 focus:ring-[#00b8b8] focus:ring-offset-2 focus:ring-offset-[#0a0a0a] transition-all"
+                  style={{
+                    fontFamily: 'var(--font-ibm-plex-mono), monospace',
+                    fontSize: '1rem',
+                    lineHeight: '1.6',
+                  }}
+                  aria-expanded={isExpanded}
+                  aria-label={`Film entry: ${film.title} ${film.year}`}
+                >
+                  <FilmEntryLine
+                    timestamp={timestamp}
+                    title={titleSnake}
+                    year={film.year}
+                    note={film.note}
+                    isFocused={isFocused}
+                    reducedMotion={reducedMotion}
+                    delay={lineDelay}
+                  />
+                </motion.button>
 
-              {/* Note */}
-              <div className="pl-5">
-                <p className="text-text-dim group-hover:text-text text-sm md:text-base italic transition-colors">
-                  {film.note}
-                </p>
+                {/* Expanded detail */}
+                {isExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: reducedMotion ? 0 : 0.2 }}
+                    className="ml-0 pl-0 py-1"
+                    style={{
+                      fontFamily: 'var(--font-ibm-plex-mono), monospace',
+                      fontSize: '0.875rem',
+                      color: '#b45a5a',
+                    }}
+                  >
+                    tags:[{tags.map(tag => `[${tag}]`).join(' ')}]
+                  </motion.div>
+                )}
               </div>
-
-              {/* Decrypt effect on hover */}
-              <motion.div
-                className="h-px bg-gradient-to-r from-crimson/0 via-crimson/50 to-crimson/0 mt-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                initial={false}
-              />
-            </motion.div>
-          ))}
+            );
+          })}
         </div>
-
-        {/* Footer note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.5, duration: 0.6 }}
-          className="mt-16 text-text-dim text-xs font-mono space-y-2"
-        >
-          <p className="flicker-slow">
-            [NOTE] :: cinema as code. every cut is logic. every frame: intent.
-          </p>
-          <p className="text-text-dim/50">
-            // more notes encrypted. decryption pending.
-          </p>
-        </motion.div>
       </div>
     </section>
   );
 }
 
+// Film entry line component with hover effects
+function FilmEntryLine({
+  timestamp,
+  title,
+  year,
+  note,
+  isFocused,
+  reducedMotion,
+  delay,
+}: {
+  timestamp: string;
+  title: string;
+  year: number;
+  note: string;
+  isFocused: boolean;
+  reducedMotion: boolean;
+  delay: number;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [showChromatic, setShowChromatic] = useState(false);
+  const [yearFlash, setYearFlash] = useState(false);
+  const [yearStabilized, setYearStabilized] = useState(false);
+  const [displayedLength, setDisplayedLength] = useState(0);
+
+  // Extract year from timestamp (first 4 digits)
+  const yearStr = timestamp.substring(0, 4);
+  const restOfTimestamp = timestamp.substring(4);
+  
+  // Build the full line for decrypt
+  const fullLine = `[${timestamp}] ${title} — ${note}`;
+  const totalLength = fullLine.length;
+
+  // Decrypt animation
+  useEffect(() => {
+    if (reducedMotion) {
+      setDisplayedLength(totalLength);
+      return;
+    }
+
+    setDisplayedLength(0);
+    const timeout = setTimeout(() => {
+      let current = 0;
+      const interval = setInterval(() => {
+        if (current < totalLength) {
+          setDisplayedLength(current + 1);
+          current++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 50);
+
+      return () => clearInterval(interval);
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [delay, totalLength, reducedMotion]);
+
+  // Parse the displayed portion to extract parts with proper styling
+  const displayedText = fullLine.substring(0, displayedLength);
+  
+  // Find positions of each part in the full line
+  const timestampEnd = `[${timestamp}]`.length;
+  const titleStart = timestampEnd + 1; // +1 for space
+  const titleEnd = titleStart + title.length;
+  const dividerStart = titleEnd;
+  const dividerEnd = dividerStart + 3; // " — "
+  const noteStart = dividerEnd;
+
+  return (
+    <div
+      onMouseEnter={() => {
+        setIsHovered(true);
+        if (!reducedMotion) {
+          setShowChromatic(true);
+          setYearFlash(true);
+          setTimeout(() => {
+            setShowChromatic(false);
+            setYearFlash(false);
+            setYearStabilized(true);
+          }, 200);
+        } else {
+          setYearStabilized(true);
+        }
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setYearStabilized(false);
+      }}
+      className="relative"
+    >
+      {/* Render with proper styling based on position */}
+      {displayedText.split('').map((char, index) => {
+        // Determine which part this character belongs to
+        let color = '#666';
+        let fontFamily = 'var(--font-ibm-plex-mono), monospace';
+        let letterSpacing = 'normal';
+        let fontStyle = 'normal';
+        let className = '';
+        
+        if (index < timestampEnd) {
+          // Timestamp part
+          color = '#666';
+          // Check if this is the year part (characters 1-4 after the bracket)
+          if (index >= 1 && index <= 4) {
+            // Flash cyan on hover, then stabilize to cyan
+            if (isHovered && (yearFlash || yearStabilized)) {
+              color = '#00b8b8';
+            } else {
+              color = '#666';
+            }
+          }
+        } else if (index >= titleStart && index < titleEnd) {
+          // Title part
+          color = '#e5e5e5';
+          fontFamily = 'var(--font-share-tech-mono), "OCR-A Extended", monospace';
+          letterSpacing = '0.04em';
+        } else if (index >= dividerStart && index < dividerEnd) {
+          // Divider part
+          color = '#00b8b8';
+        } else if (index >= noteStart) {
+          // Note part
+          color = '#b45a5a';
+          fontStyle = 'italic';
+          if (showChromatic) {
+            className = 'chromatic-aberration-hover';
+          }
+        }
+        
+        return (
+          <span
+            key={index}
+            style={{
+              color,
+              fontFamily,
+              letterSpacing,
+              fontStyle,
+              transition: reducedMotion ? 'none' : 'color 0.2s ease',
+            }}
+            className={className}
+          >
+            {char}
+          </span>
+        );
+      })}
+    </div>
+  );
+}

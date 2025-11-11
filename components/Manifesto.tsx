@@ -5,10 +5,13 @@ import { motion } from "framer-motion";
 import GlitchText from "./GlitchText";
 
 const manifestoLines = [
-  "born in bishkek.",
-  "raised between systems that refused to evolve.",
-  "i'm not here to play the game.",
-  "i'm here to rewrite it.",
+  'from kyrgyzstan.',
+    'you probably dont know what that is.',
+    `i wanna change that.`,
+    "i love my country more than anything.",
+    "i'm here to rewrite it.",
+    "i'm here to make it better.",
+    "i'm here to see it prosper.",
 ];
 
 export default function Manifesto() {

@@ -10,9 +10,10 @@ interface PreloaderProps {
 const bootSequence = [
   '[SYSTEM] initializing...',
   '[AUTH] validating credentials...',
-  '[REBUILDING: SYSTEMS]',
-  '[UPDATING: GOVERNMENT]',
-  '[INITIATING: TRUTH]',
+  '[SYSTEMS] integrating justice into runtime...',
+  '[GOVERNMENT] resisting entropy of ideals...',
+  '[INITIALIZATION] determinism patched with hope.',
+  '[ETHICS] narcissism disguised as righteousness?',
   '[STATUS] ready.',
 ];
 
@@ -44,7 +45,8 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black"
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      style={{ backgroundColor: '#080808' }}
     >
       {/* White noise background */}
       <div className="absolute inset-0 opacity-10">

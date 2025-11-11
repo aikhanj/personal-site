@@ -43,7 +43,8 @@ export default function Contact() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="border border-crimson/30 bg-black p-8 font-mono"
+          className="border border-crimson/30 p-8 font-mono"
+          style={{ backgroundColor: '#080808' }}
         >
           {/* Command Prompt */}
           <div className="space-y-4">
@@ -117,7 +118,7 @@ export default function Contact() {
                     ))}
                   </a>
                   <div className="text-xs text-text-dim font-mono">
-                    // encrypted channel available 24/7
+                    {'// encrypted channel available 24/7'}
                   </div>
                 </motion.div>
               )}
@@ -137,7 +138,7 @@ export default function Contact() {
             partnerships, system reconstruction projects
           </p>
           <p className="text-text-dim/50">
-            // response time: variable. quality: guaranteed.
+            {'// response time: variable. quality: guaranteed.'}
           </p>
         </motion.div>
 
