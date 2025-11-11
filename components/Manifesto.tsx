@@ -7,7 +7,7 @@ import GlitchText from "./GlitchText";
 const manifestoLines = [
   'im from kyrgyzstan.',
     'you probably dont know what that is.',
-    `i wanna change that.`,
+    `i want to change that.`,
     "i love my country more than anything.",
     '',
     "i'm here to rewrite it.",
