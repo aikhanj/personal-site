@@ -87,10 +87,12 @@ export default function Projects() {
                       className="inline-block text-text group-hover:text-crimson transition-colors"
                       animate={
                         hoveredProject === project.id
-                          ? {
-                              opacity: [1, 0, 1],
-                              transition: { duration: 0.3, repeat: 2 },
-                            }
+                          ? { opacity: [1, 0, 1] }
+                          : {}
+                      }
+                      transition={
+                        hoveredProject === project.id
+                          ? { duration: 0.3, repeat: 2 }
                           : {}
                       }
                     >

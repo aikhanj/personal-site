@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Preloader from '@/app/components/Preloader';
-import Hero from '@/components/Hero';
-import Manifesto from '@/components/Manifesto';
-import Achievements from '@/components/Achievements';
-import Projects from '@/components/Projects';
-import Films from '@/components/Films';
-import Contact from '@/components/Contact';
+import Hero from '@/app/components/Hero';
+import Manifesto from '@/app/components/Manifesto';
+import Achievements from '@/app/components/Achievements';
+import Projects from '@/app/components/Projects';
+import Films from '@/app/components/Films';
+import Contact from '@/app/components/Contact';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
