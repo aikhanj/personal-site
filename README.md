@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Portfolio Site
+
+A terminal-inspired personal portfolio website built with Next.js, featuring CRT effects, glitch text animations, and a retro cyberpunk aesthetic. Showcasing projects, achievements, films, and a manifesto focused on systems, change, and building a better future.
+
+**Tech Stack:** Next.js 16, React 19, Framer Motion, Tailwind CSS
 
 ## Getting Started
 
