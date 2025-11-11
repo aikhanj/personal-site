@@ -180,7 +180,7 @@ export default function Projects() {
       x: 0,
       transition: {
         duration: reducedMotion ? 0.01 : 0.3,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };

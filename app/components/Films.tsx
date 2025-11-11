@@ -75,7 +75,7 @@ function generateTimestamp(film: Film): string {
 export default function Films() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotion() ?? false;
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [grepFilter, setGrepFilter] = useState<string | null>(null);

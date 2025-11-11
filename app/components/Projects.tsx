@@ -94,21 +94,19 @@ export default function Projects() {
                           : {}
                       }
                     >
-                      {hoveredProject === project.id
-                        ? project.plainTitle
-                        : project.title}
+                      {project.name}
                     </motion.span>
                   </h4>
                 </div>
 
                 {/* Description */}
                 <p className="text-text-dim text-sm md:text-base mb-6 leading-relaxed group-hover:text-text transition-colors">
-                  {project.description}
+                  {project.purpose}
                 </p>
 
                 {/* Tech Stack */}
                 <div className="flex flex-wrap gap-2">
-                  {project.tech.map((tech) => (
+                  {project.stack.map((tech) => (
                     <span
                       key={tech}
                       className="text-xs px-3 py-1 border border-cyan/40 text-cyan font-mono hover:bg-cyan/10 transition-colors"

@@ -38,7 +38,7 @@ export default function Films() {
             >
               <span className="text-[#ff0033]"><GlitchText intensity="low">{">"}</GlitchText></span>{" "}
               <span className="text-[#d0d0d0]"><GlitchText intensity="low">{film.title}</GlitchText></span>{" "}
-              <span className="text-[#00ffd5]"><GlitchText intensity="low">({film.year})</GlitchText></span>
+              <span className="text-[#00ffd5]"><GlitchText intensity="low">{`(${film.year})`}</GlitchText></span>
               <GlitchText intensity="low">{": "}</GlitchText>
               <span className="text-[#d0d0d0] italic"><GlitchText intensity="low">{film.note}</GlitchText></span>
             </motion.div>
