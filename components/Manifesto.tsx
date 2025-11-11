@@ -5,10 +5,11 @@ import { motion } from "framer-motion";
 import GlitchText from "./GlitchText";
 
 const manifestoLines = [
-  'from kyrgyzstan.',
+  'im from kyrgyzstan.',
     'you probably dont know what that is.',
     `i wanna change that.`,
     "i love my country more than anything.",
+    '',
     "i'm here to rewrite it.",
     "i'm here to make it better.",
     "i'm here to see it prosper.",
@@ -29,7 +30,7 @@ export default function Manifesto() {
         >
           why i build
         </motion.h2>
-
+        <br /><br />
         <div className="space-y-6">
           {manifestoLines.map((line, index) => (
             <motion.div

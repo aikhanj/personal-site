@@ -50,6 +50,7 @@ function parseEntry(entry: string): { parts: Array<{ text: string; isCompetition
     /math\.amc\d+/g,
     /republic\.olympiad/g,
     /crimson\.18u18\.global/g,
+    /18u18\.global/g,
     /inspirit\.ai/g,
     /ikyrgyz\.project/g,
     /research:/g,

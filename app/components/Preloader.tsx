@@ -10,9 +10,9 @@ interface PreloaderProps {
 const bootSequence = [
   '[SYSTEM] initializing...',
   '[AUTH] validating credentials...',
-  '[SYSTEMS] integrating justice into runtime...',
+  '[SECURITY] patching vulnerabilities...',
   '[GOVERNMENT] resisting entropy of ideals...',
-  '[INITIALIZATION] determinism patched with hope.',
+  '[MIDDLEWARE] determinism patched with hope.',
   '[ETHICS] narcissism disguised as righteousness?',
   '[STATUS] ready.',
 ];

@@ -22,7 +22,7 @@ export default function GlitchText({
   intensity = "medium",
   trigger = false,
   randomGlitch = true,
-    randomGlitchInterval = 6000,
+    randomGlitchInterval = 12000,
   initialScramble = false,
   initialScrambleDuration = 500,
 }: GlitchTextProps) {
