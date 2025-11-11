@@ -28,10 +28,23 @@ export const metadata: Metadata = {
   description: "municipal ai · film · systems · change. one man versus systemic decay. rebuilding through logic and light.",
   keywords: ["aikhan", "municipal ai", "systems", "reconstruction", "technology", "film", "kyrgyz", "bishkek"],
   authors: [{ name: "Aikhan" }],
+  icons: {
+    icon: "/kidkhan2.png",
+    shortcut: "/kidkhan2.png",
+    apple: "/kidkhan2.png",
+  },
   openGraph: {
     title: "khan",
     description: "reconstructing systems through computation and intent",
     type: "website",
+    images: [
+      {
+        url: "/kidkhan2.png",
+        width: 1200,
+        height: 630,
+        alt: "khan",
+      },
+    ],
   },
 };
 
