@@ -7,12 +7,13 @@ import GlitchText from "./GlitchText";
 export default function Contact() {
   const [showEmail, setShowEmail] = useState(false);
   const [glitchTrigger, setGlitchTrigger] = useState(false);
-  const [visibleLines, setVisibleLines] = useState<boolean[]>([false, false, false, false]);
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [visibleLines, setVisibleLines] = useState<boolean[]>([false, false, false, false, false]);
 
   useEffect(() => {
     // Sequentially reveal lines when email is shown
     if (showEmail) {
-      const delays = [0, 400, 800, 1200]; // Delay for each line in milliseconds
+      const delays = [0, 400, 800, 1200, 1600]; // Delay for each line in milliseconds
       
       delays.forEach((delay, index) => {
         setTimeout(() => {
@@ -43,16 +44,15 @@ export default function Contact() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 py-20">
-      <div className="max-w-4xl w-full">
-        <div className="font-mono space-y-6">
+    <section className="relative min-h-screen flex items-center justify-center py-24 md:py-32">
+      <div className="w-[90%] max-w-4xl mx-auto px-4 md:px-0">
+        <div className="font-mono space-y-8 md:space-y-6 text-sm">
           {/* Command Line Prompt */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-base md:text-lg"
           >
             <span className="text-[#00ffd5]"><GlitchText intensity="low">$</GlitchText></span>{" "}
             <span className="text-[#d0d0d0]"><GlitchText intensity="low">connect --protocol=email</GlitchText><br /></span>
@@ -70,7 +70,7 @@ export default function Contact() {
 
           {/* Email Reveal */}
           {showEmail && (
-            <div className="text-base md:text-lg">
+            <div>
               {/* Line 1: [response] connecting... */}
               {visibleLines[0] && (
                 <motion.div
@@ -112,7 +112,7 @@ export default function Contact() {
                   <span className="text-[#00ffd5]"><GlitchText intensity="low">[</GlitchText></span>
                   <span className="text-[#d0d0d0]"><GlitchText intensity="low">connection</GlitchText></span>
                   <span className="text-[#00ffd5]"><GlitchText intensity="low">]</GlitchText></span>{" "}
-                  <span className="text-[#d0d0d0]"><GlitchText intensity="low">if youre at princeton, lets grab a coffee!</GlitchText></span>
+                  <span className="text-[#d0d0d0]"><GlitchText intensity="low">if youre at princeton, lets grab a coffee...</GlitchText></span>
                 </motion.div>
               )}
               
@@ -134,6 +134,58 @@ export default function Contact() {
                   >
                     ajumashukurov@gmail.com
                   </GlitchText>
+                </motion.div>
+              )}
+              
+              {/* Line 5: Social links */}
+              {visibleLines[4] && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <br />
+                  <a
+                    href="https://github.com/aikhanj"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block"
+                    onMouseEnter={() => setHoveredLink("github")}
+                    onMouseLeave={() => setHoveredLink(null)}
+                    style={{
+                      color: "#ff0033",
+                    }}
+                  >
+                    <GlitchText intensity="medium" trigger={hoveredLink === "github"}>github</GlitchText>
+                  </a>
+                  <span className="text-[#ff0033]"> </span>
+                  <a
+                    href="https://linkedin.com/in/aikhanj"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block"
+                    onMouseEnter={() => setHoveredLink("linkedin")}
+                    onMouseLeave={() => setHoveredLink(null)}
+                    style={{
+                      color: "#ff0033",
+                    }}
+                  >
+                    <GlitchText intensity="medium" trigger={hoveredLink === "linkedin"}>linkedin</GlitchText>
+                  </a>
+                  <span className="text-[#ff0033]"> </span>
+                  <a
+                    href="https://x.com/jumashukurov"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block"
+                    onMouseEnter={() => setHoveredLink("twitter")}
+                    onMouseLeave={() => setHoveredLink(null)}
+                    style={{
+                      color: "#ff0033",
+                    }}
+                  >
+                    <GlitchText intensity="medium" trigger={hoveredLink === "twitter"}>twitter</GlitchText>
+                  </a>
                 </motion.div>
               )}
             </div>

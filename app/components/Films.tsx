@@ -171,7 +171,7 @@ export default function Films() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-20 py-24 overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center py-24 md:py-32 overflow-hidden"
       style={{ backgroundColor: '#080808' }}
     >
       {/* Scanline overlay - same as achievements */}
@@ -188,13 +188,13 @@ export default function Films() {
         }}
       />
 
-      <div className="relative z-10 max-w-4xl w-full">
+      <div className="relative z-10 w-[90%] max-w-4xl mx-auto px-4 md:px-0">
         <motion.div
           ref={ref}
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: reducedMotion ? 0.01 : 0.6 }}
-          className="mb-8"
+          className="mb-10 md:mb-8"
         >
           {/* Access level meta */}
           <div

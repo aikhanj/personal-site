@@ -19,19 +19,18 @@ export default function Manifesto() {
   const [hoveredLine, setHoveredLine] = useState<number | null>(null);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 py-20">
-      <div className="max-w-4xl w-full">
+    <section className="relative min-h-screen flex items-center justify-center py-24 md:py-32">
+      <div className="w-[90%] max-w-4xl mx-auto px-4 md:px-0">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl font-bold mb-20 text-[#d0d0d0] tracking-tight"
+          className="text-2xl md:text-3xl lg:text-4xl font-bold mb-24 md:mb-20 text-[#d0d0d0] tracking-tight"
         >
           why i build
         </motion.h2>
-        <br /><br />
-        <div className="space-y-6">
+        <div className="space-y-8 md:space-y-6">
           {manifestoLines.map((line, index) => (
             <motion.div
               key={index}
@@ -47,7 +46,7 @@ export default function Manifesto() {
                 transition: { duration: 0.08, repeat: 2 },
               }}
             >
-              <p className="text-lg md:text-xl text-[#d0d0d0] font-light leading-relaxed">
+              <p className="text-base md:text-lg lg:text-xl text-[#d0d0d0] font-light leading-relaxed">
                 <GlitchText
                   trigger={hoveredLine === index}
                   intensity="low"

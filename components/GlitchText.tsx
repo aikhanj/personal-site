@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface GlitchTextProps {
-  children: string;
+  children: React.ReactNode;
   className?: string;
   intensity?: "low" | "medium" | "high";
   trigger?: boolean;
@@ -16,6 +16,24 @@ interface GlitchTextProps {
 
 const glitchChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
+// Helper function to convert React children to string
+function childrenToString(children: React.ReactNode): string {
+  if (typeof children === "string") {
+    return children;
+  }
+  if (typeof children === "number") {
+    return String(children);
+  }
+  if (Array.isArray(children)) {
+    return children.map(childrenToString).join("");
+  }
+  if (children && typeof children === "object" && "props" in children) {
+    const reactElement = children as React.ReactElement<{ children?: React.ReactNode }>;
+    return childrenToString(reactElement.props?.children || "");
+  }
+  return "";
+}
+
 export default function GlitchText({
   children,
   className = "",
@@ -26,18 +44,20 @@ export default function GlitchText({
   initialScramble = false,
   initialScrambleDuration = 500,
 }: GlitchTextProps) {
+  const textContent = childrenToString(children);
+  
   const [glitched, setGlitched] = useState(initialScramble);
   const [displayText, setDisplayText] = useState(() => {
     // Start with scrambled text if initialScramble is enabled
     if (initialScramble) {
-      const chars = children.split("");
+      const chars = textContent.split("");
       const glitchedChars = chars.map((char) => {
         if (char === " ") return " ";
         return glitchChars[Math.floor(Math.random() * glitchChars.length)];
       });
       return glitchedChars.join("");
     }
-    return children;
+    return textContent;
   });
   const randomGlitchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const glitchIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -60,7 +80,7 @@ export default function GlitchText({
       
       if (isGlitching) {
         setGlitched(true);
-        const chars = children.split("");
+        const chars = textContent.split("");
         
         // Determine character probability based on trigger state
         const charProbability = isTriggerActiveRef.current 
@@ -76,7 +96,7 @@ export default function GlitchText({
         });
         setDisplayText(glitchedChars.join(""));
       } else {
-        setDisplayText(children);
+        setDisplayText(textContent);
         setGlitched(false);
       }
     };
@@ -88,7 +108,7 @@ export default function GlitchText({
         clearInterval(glitchIntervalRef.current);
       }
     };
-  }, [children, intensity]);
+  }, [textContent, intensity]);
 
   // Handle trigger (hover) glitches
   useEffect(() => {
@@ -119,13 +139,13 @@ export default function GlitchText({
         const progress = Math.min(elapsed / initialScrambleDuration, 1);
         
         if (progress >= 1) {
-          setDisplayText(children);
+          setDisplayText(textContent);
           setGlitched(false);
           glitchEndTimeRef.current = 0;
           clearInterval(revealInterval);
         } else {
           // Gradually reduce scrambling - start with high probability, end with 0
-          const chars = children.split("");
+          const chars = textContent.split("");
           const charProbability = config.chars * (1 - progress);
           
           const glitchedChars = chars.map((char, i) => {
@@ -143,7 +163,7 @@ export default function GlitchText({
         clearInterval(revealInterval);
       };
     }
-  }, [initialScramble, initialScrambleDuration, children, intensity]);
+  }, [initialScramble, initialScrambleDuration, textContent, intensity]);
 
   // Handle random glitches
   useEffect(() => {

@@ -14,8 +14,21 @@ export default function Hero() {
   const [showMetadata, setShowMetadata] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [jitterOffset, setJitterOffset] = useState(0);
+  const [windowHeight, setWindowHeight] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   useEffect(() => {
+    // Calculate window dimensions for quote positioning
+    const updateDimensions = () => {
+      setWindowHeight(window.innerHeight);
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Set initial dimensions
+    updateDimensions();
+
+    // Update on resize
+    window.addEventListener('resize', updateDimensions);
 
     // Show metadata after a short delay
     const timer1 = setTimeout(() => setShowMetadata(true), 400);
@@ -31,6 +44,7 @@ export default function Hero() {
     }, 7000 + Math.random() * 1000); // Random between 7-8 seconds
 
     return () => {
+      window.removeEventListener('resize', updateDimensions);
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearInterval(jitterInterval);
@@ -53,9 +67,9 @@ export default function Hero() {
         }}
       />
 
-      {/* Main content - left-aligned, slightly low on screen */}
-      <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-[32vh]">
-        <div className="space-y-3">
+      {/* Main content - 90% width container */}
+      <div className="relative z-10 w-[90%] max-w-6xl mx-auto pt-28 pb-24 md:pt-[32vh] md:pb-32">
+        <div className="space-y-4">
           {/* Title - terminal artifact style */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -84,13 +98,17 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Russian Quote - right-aligned, fades in last */}
+      {/* Russian Quote - positioned at bottom right based on screen height */}
       {showQuote && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="absolute bottom-20 right-6 md:right-12 lg:right-20 hero-quote text-right max-w-md"
+          className="absolute z-10 hero-quote text-right max-w-md"
+          style={{
+            right: windowWidth >= 1024 ? '5rem' : windowWidth >= 768 ? '3rem' : '1.5rem',
+            bottom: windowHeight > 0 ? `${Math.max(60, windowHeight * 0.08)}px` : '60px',
+          }}
         >
           <GlitchText intensity="high" randomGlitchInterval={2000} initialScramble={true} initialScrambleDuration={700}>Неправильный не я.</GlitchText> <br /> <GlitchText intensity="high" randomGlitchInterval={2000} initialScramble={true} initialScrambleDuration={700}>Неправильный весь этот мир.</GlitchText>
         </motion.div>

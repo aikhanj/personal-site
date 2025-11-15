@@ -187,7 +187,7 @@ export default function Projects() {
 
   return (
     <section
-      className="relative min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-20 py-24 overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center py-24 md:py-32 overflow-hidden"
       style={{ backgroundColor: "#080808" }}
     >
       {/* Scanline overlay */}
@@ -204,14 +204,14 @@ export default function Projects() {
         }}
       />
 
-      <div ref={containerRef} className="relative z-10 max-w-[920px] w-full">
+      <div ref={containerRef} className="relative z-10 w-[90%] max-w-[920px] mx-auto px-4 md:px-0">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: reducedMotion ? 0.01 : 0.6 }}
-          className="mb-8"
+          className="mb-10 md:mb-8"
           style={{
             fontFamily: "var(--font-ibm-plex-mono, 'IBM Plex Mono'), monospace",
           }}
@@ -260,8 +260,9 @@ export default function Projects() {
         </motion.div>
 
         {/* Process Table */}
-        <div className="overflow-x-auto">
-          <motion.div
+        <div className="hidden md:block">
+          <div className="overflow-x-auto">
+            <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -296,7 +297,6 @@ export default function Projects() {
             {/* Process Rows */}
             {projects.map((project, index) => {
               const isExpanded = expandedId === project.id;
-              const isFocused = focusedIndex === index;
               const isHovered = hoveredId === project.id;
               const isKilled = killedPid === project.pid;
               const isRestarted = restartedPid === project.pid;
@@ -449,40 +449,190 @@ export default function Projects() {
                 </motion.div>
               );
             })}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Mobile Process Cards */}
+        <div className="md:hidden">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="flex flex-col gap-6"
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono, 'IBM Plex Mono'), monospace",
+              color: "#c8c8c8",
+              letterSpacing: "0.02em",
+            }}
+          >
+            {projects.map((project, index) => {
+              const isExpanded = expandedId === project.id;
+              const isKilled = killedPid === project.pid;
+              const isRestarted = restartedPid === project.pid;
+              const isFirstRow = index === 0;
+              const displayName =
+                isFirstRow && !reducedMotion ? firstRowName : project.name;
+
+              return (
+                <motion.div key={`${project.id}-mobile`} variants={rowVariants}>
+                  <div
+                    className="rounded-2xl bg-[#050505]/80 backdrop-blur-sm"
+                    style={{
+                      opacity: isKilled ? 0 : 1,
+                      transition: isKilled ? "opacity 0.9s ease-out" : "none",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleExpand(project.id)}
+                      onFocus={() => setFocusedIndex(index)}
+                      className="w-full text-left px-6 py-5 sm:px-7 sm:py-6 focus-visible:outline-2 focus-visible:outline-cyan focus-visible:outline-offset-2"
+                      aria-expanded={isExpanded}
+                      aria-label={`Process ${project.name}, PID ${project.pid}, Status ${project.status}`}
+                      style={{ backgroundColor: "transparent" }}
+                    >
+                      <div
+                        className="flex flex-wrap items-center justify-between gap-2 text-[0.65rem] uppercase tracking-[0.2em]"
+                        style={{ color: "#888888" }}
+                      >
+                        <span>
+                          <GlitchText intensity="low">root · pid {project.pid}</GlitchText>
+                        </span>
+                        <span style={{ color: statusColors[project.status] }}>
+                          <GlitchText intensity="low">{project.status}</GlitchText>
+                        </span>
+                      </div>
+                      <div className="mt-4 text-lg leading-tight" style={{ color: "#00ffd5" }}>
+                        <GlitchText intensity="low">{displayName}</GlitchText>
+                        {isFirstRow && isTypingFirstRow && !reducedMotion && (
+                          <span
+                            className="inline-block ml-1 w-[2px] h-[1em] align-baseline"
+                            style={{
+                              backgroundColor: "#00ffd5",
+                              animation: "cursor-blink 1s step-end infinite",
+                            }}
+                          />
+                        )}
+                      </div>
+                      <p className="mt-3 text-sm leading-relaxed" style={{ color: "#c8c8c8" }}>
+                        <GlitchText intensity="low">{project.purpose}</GlitchText>
+                      </p>
+                      <div
+                        className="mt-4 text-[0.7rem] uppercase tracking-[0.2em]"
+                        style={{ color: "#888888" }}
+                      >
+                        <GlitchText intensity="low">
+                          cpu {project.cpu.toFixed(1)}% · uptime {project.uptime}
+                        </GlitchText>
+                      </div>
+                    </button>
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{
+                            duration: reducedMotion ? 0.01 : 0.3,
+                            ease: "easeInOut",
+                          }}
+                          className="px-6 pb-5 pt-4 sm:px-7 sm:pb-6 sm:pt-5 text-xs"
+                          style={{
+                            color: "#bdbdbd",
+                            letterSpacing: "0.02em",
+                            backgroundColor: "#070707",
+                          }}
+                        >
+                          <div className="mb-2">
+                            <span className="text-[#00ffd5]">
+                              <GlitchText intensity="low">stack:</GlitchText>
+                            </span>{" "}
+                            <span>
+                              <GlitchText intensity="low">{project.stack.join(" ")}</GlitchText>
+                            </span>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-[#00ffd5]">
+                              <GlitchText intensity="low">links:</GlitchText>
+                            </span>
+                            <div className="flex flex-col gap-1">
+                              <a
+                                href={project.links.repo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline decoration-dotted"
+                                style={{ color: "#c8c8c8" }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <GlitchText intensity="low">{project.links.repo}</GlitchText>
+                              </a>
+                              <a
+                                href={project.links.live}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline decoration-dotted"
+                                style={{ color: "#c8c8c8" }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <GlitchText intensity="low">{project.links.live}</GlitchText>
+                              </a>
+                            </div>
+                          </div>
+                          {isRestarted && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="mt-3"
+                              style={{ color: "#ff0033" }}
+                            >
+                              <GlitchText intensity="medium">[RESTARTED]</GlitchText>
+                            </motion.div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
 
         {/* Kill Command Input (Easter Egg) */}
-        <AnimatePresence>
-          {showCommandInput && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="mt-4"
-              style={{
-                fontFamily: "var(--font-ibm-plex-mono, 'IBM Plex Mono'), monospace",
-                color: "#888888",
-                fontSize: "0.7rem",
-              }}
-            >
-              <GlitchText intensity="low">$ </GlitchText>
-              <input
-                ref={commandInputRef}
-                type="text"
-                value={commandInput}
-                onChange={(e) => setCommandInput(e.target.value)}
-                className="bg-transparent border-none outline-none focus:outline-none"
+        <div className="hidden md:block">
+          <AnimatePresence>
+            {showCommandInput && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="mt-4"
                 style={{
-                  color: "#c8c8c8",
                   fontFamily: "var(--font-ibm-plex-mono, 'IBM Plex Mono'), monospace",
-                  width: "200px",
+                  color: "#888888",
+                  fontSize: "0.7rem",
                 }}
-                autoFocus
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+              >
+                <GlitchText intensity="low">$ </GlitchText>
+                <input
+                  ref={commandInputRef}
+                  type="text"
+                  value={commandInput}
+                  onChange={(e) => setCommandInput(e.target.value)}
+                  className="bg-transparent border-none outline-none focus:outline-none"
+                  style={{
+                    color: "#c8c8c8",
+                    fontFamily: "var(--font-ibm-plex-mono, 'IBM Plex Mono'), monospace",
+                    width: "200px",
+                  }}
+                  autoFocus
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
       </div>
 

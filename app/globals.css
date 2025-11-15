@@ -457,6 +457,31 @@ button[aria-expanded]:focus {
   color: var(--black);
 }
 
+/* Hide caret cursor in input fields and textareas */
+input,
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+[contenteditable] {
+  caret-color: transparent !important;
+}
+
+input:focus,
+textarea:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+[contenteditable]:focus {
+  caret-color: transparent !important;
+}
+
 /* Terminal Hero Styles */
 .terminal-hero {
   background: #080808;
@@ -465,7 +490,7 @@ button[aria-expanded]:focus {
 /* Hero Title - terminal artifact style */
 .hero-title {
   font-family: 'OCR-A Extended', var(--font-ibm-plex-mono, 'IBM Plex Mono'), 'IBM Plex Mono', monospace;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(1.125rem, 4vw, 2.5rem);
   font-weight: 500;
   color: #c8c8c8;
   letter-spacing: 0.04em;
@@ -481,7 +506,7 @@ button[aria-expanded]:focus {
 /* Hero Metadata */
 .hero-metadata {
   font-family: var(--font-ibm-plex-mono, 'IBM Plex Mono'), 'IBM Plex Mono', monospace;
-  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-size: clamp(0.625rem, 1.5vw, 0.875rem);
   font-weight: 400;
   color: #888888;
   letter-spacing: 0.02em;
@@ -490,7 +515,7 @@ button[aria-expanded]:focus {
 /* Hero Quote */
 .hero-quote {
   font-family: var(--font-ibm-plex-mono, 'IBM Plex Mono'), 'IBM Plex Mono', monospace;
-  font-size: clamp(0.875rem, 1.8vw, 1rem);
+  font-size: clamp(0.75rem, 1.8vw, 1rem);
   font-weight: 400;
   font-style: italic;
   color: #888888;
