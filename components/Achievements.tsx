@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, Variants } from "framer-motion";
 import achievementsData from "@/data/achievements.json";
 import GlitchText from "./GlitchText";
 
@@ -58,7 +58,7 @@ function parseEntry(entry: string): { parts: Array<{ text: string; isCompetition
 
   const parts: Array<{ text: string; isCompetition: boolean }> = [];
   let lastIndex = 0;
-  let foundMatches: Array<{ start: number; end: number }> = [];
+  const foundMatches: Array<{ start: number; end: number }> = [];
 
   highlightPatterns.forEach(pattern => {
     const matches = entry.matchAll(pattern);
@@ -114,7 +114,11 @@ export default function Achievements() {
   useEffect(() => {
     // Check for prefers-reduced-motion
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mediaQuery.matches);
+    
+    // Defer initial state update to avoid synchronous setState
+    requestAnimationFrame(() => {
+      setReducedMotion(mediaQuery.matches);
+    });
 
     const handleChange = (e: MediaQueryListEvent) => {
       setReducedMotion(e.matches);
@@ -135,13 +139,13 @@ export default function Achievements() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         duration: reducedMotion ? 0.01 : 0.6,
-        ease: "easeOut",
+        ease: [0.17, 0.67, 0.83, 0.67] as const,
       },
     },
   };
@@ -259,13 +263,13 @@ function AchievementLine({
   achievement: Achievement;
   parts: Array<{ text: string; isCompetition: boolean }>;
   index: number;
-  variants: any;
+  variants: Variants;
   typingSpeed: number;
   shouldType: boolean;
   reducedMotion: boolean;
 }) {
   const fullEntry = achievement.entry;
-  const { displayedText, isTyping } = useTypingEffect(
+  const { displayedText, isTyping }: { displayedText: string; isTyping: boolean } = useTypingEffect(
     fullEntry,
     typingSpeed,
     shouldType && !reducedMotion
