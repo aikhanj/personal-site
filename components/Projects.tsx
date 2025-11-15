@@ -321,6 +321,7 @@ export default function Projects() {
                       transition: isKilled
                         ? "opacity 0.9s ease-out"
                         : "none",
+                      backgroundColor: "transparent",
                     }}
                     aria-expanded={isExpanded}
                     aria-label={`Process ${project.name}, PID ${project.pid}, Status ${project.status}`}
@@ -329,6 +330,10 @@ export default function Projects() {
                       className={`flex gap-4 md:gap-8 py-1 items-center ${
                         isRunning && !reducedMotion ? "process-heartbeat" : ""
                       }`}
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBottom: "none",
+                      }}
                     >
                       <span className="w-8"><GlitchText intensity="low" trigger={isHovered}>root</GlitchText></span>
                       <span className="w-12 tabular-nums"><GlitchText intensity="low" trigger={isHovered}>{String(project.pid)}</GlitchText></span>

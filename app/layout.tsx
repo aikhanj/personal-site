@@ -29,9 +29,9 @@ export const metadata: Metadata = {
   keywords: ["aikhan", "municipal ai", "systems", "reconstruction", "technology", "film", "kyrgyz", "bishkek"],
   authors: [{ name: "Aikhan" }],
   icons: {
-    icon: "/kidkhan2.png",
-    shortcut: "/kidkhan2.png",
-    apple: "/kidkhan2.png",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
   openGraph: {
     title: "khan",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/kidkhan2.png",
+        url: "/favicon.png",
         width: 1200,
         height: 630,
         alt: "khan",

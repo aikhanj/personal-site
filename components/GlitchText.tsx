@@ -22,7 +22,7 @@ export default function GlitchText({
   intensity = "medium",
   trigger = false,
   randomGlitch = true,
-  randomGlitchInterval = 3000,
+    randomGlitchInterval = 12000,
   initialScramble = false,
   initialScrambleDuration = 500,
 }: GlitchTextProps) {
@@ -45,9 +45,9 @@ export default function GlitchText({
   const glitchEndTimeRef = useRef(0);
 
   const intensityMap = {
-    low: { duration: 60, chars: 0.1, randomChars: 0.05 },
-    medium: { duration: 80, chars: 0.2, randomChars: 0.1 },
-    high: { duration: 100, chars: 0.3, randomChars: 0.15 },
+    low: { duration: 30, chars: 0.1, randomChars: 0.05 },
+    medium: { duration: 40, chars: 0.2, randomChars: 0.1 },
+    high: { duration: 50, chars: 0.3, randomChars: 0.15 },
   };
 
   // Main glitch loop that runs continuously
@@ -192,28 +192,16 @@ export default function GlitchText({
     >
       <span className="relative z-10">{displayText}</span>
       {glitched && (
-        <>
-          <span
-            className="absolute inset-0 z-0 text-[#ff0033]"
-            style={{
-              clipPath: "inset(0 0 0 0)",
-              transform: "translate(2px, -2px)",
-              opacity: 0.8,
-            }}
-          >
-            {displayText}
-          </span>
-          <span
-            className="absolute inset-0 z-0 text-[#00ffd5]"
-            style={{
-              clipPath: "inset(0 0 0 0)",
-              transform: "translate(-2px, 2px)",
-              opacity: 0.8,
-            }}
-          >
-            {displayText}
-          </span>
-        </>
+        <span
+          className="absolute inset-0 z-0 text-[#00ffd5]"
+          style={{
+            clipPath: "inset(0 0 0 0)",
+            transform: "translate(-2px, 2px)",
+            opacity: 0.8,
+          }}
+        >
+          {displayText}
+        </span>
       )}
     </motion.span>
   );

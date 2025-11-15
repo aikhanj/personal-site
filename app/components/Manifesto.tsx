@@ -8,9 +8,11 @@ export default function Manifesto() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   const manifestoLines = [
-    'from kyrgyzstan.',
+    'why i build',
+    'im from kyrgyzstan.',
     'you probably dont know what that is.',
     `i wanna change that.`,
+    '',
     "i love my country more than anything.",
     "i'm here to rewrite it.",
     "i'm here to make it better.",
@@ -43,9 +45,9 @@ export default function Manifesto() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-4xl md:text-6xl font-bold mb-16 text-text"
         >
-          <span className="inline-block hover-glitch">why i build</span>
+          <span className="inline-block hover-glitch">why i build</span> 
         </motion.h3>
-
+       
         {/* Manifesto Text */}
         <div className="space-y-6 border-l-2 border-crimson/30 pl-8">
           {manifestoLines.map((line, index) => (
@@ -56,17 +58,23 @@ export default function Manifesto() {
               transition={{ delay: 0.4 + index * 0.15, duration: 0.6 }}
               className="group relative"
             >
-              <p className="text-xl md:text-3xl font-light text-text-dim hover:text-text transition-colors duration-300 cursor-default group-hover:glitch-subtle">
-                {line}
-              </p>
-              {/* Glitch repair effect on hover */}
-              <motion.div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(255, 0, 51, 0.1) 50%, transparent 100%)',
-                  animation: 'glitch-repair 0.3s ease-in-out',
-                }}
-              />
+              {line ? (
+                <>
+                  <p className="text-xl md:text-3xl font-light text-text-dim hover:text-text transition-colors duration-300 cursor-default group-hover:glitch-subtle">
+                    {line}
+                  </p>
+                  {/* Glitch repair effect on hover */}
+                  <motion.div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent 0%, rgba(255, 0, 51, 0.1) 50%, transparent 100%)',
+                      animation: 'glitch-repair 0.3s ease-in-out',
+                    }}
+                  />
+                </>
+              ) : (
+                <div className="h-6" />
+              )}
             </motion.div>
           ))}
         </div>

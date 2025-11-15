@@ -344,6 +344,18 @@ html {
   }
 }
 
+/* Prevent red bars/backgrounds on process rows */
+button[aria-expanded] {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+button[aria-expanded]:hover,
+button[aria-expanded]:focus {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
 /* Text reveal animation */
 .text-reveal {
   opacity: 0;
