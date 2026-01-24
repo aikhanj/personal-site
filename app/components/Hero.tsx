@@ -30,7 +30,7 @@ function useTypingEffect(text: string, speed: number = 50) {
 }
 
 export default function Hero() {
-  const metaLine = 'user@municipal-ai:~$';
+  const metaLine = 'user@kyrgyzstan:~$';
   const actionLine = 'executing manifest…';
   const quoteText = 'Неправильный не я. Неправильный весь этот мир...';
 

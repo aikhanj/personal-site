@@ -92,7 +92,7 @@ export default function Hero() {
               transition={{ duration: 0.5 }}
               className="hero-metadata"
             >
-              <GlitchText intensity="low" initialScramble={true} initialScrambleDuration={500}>[domain: municipal-ai] [focus: film, systems, change]</GlitchText>
+              <GlitchText intensity="low" initialScramble={true} initialScrambleDuration={500}>[domain: kyrgyzstan] [focus: film, systems, change]</GlitchText>
             </motion.div>
           )}
         </div>
