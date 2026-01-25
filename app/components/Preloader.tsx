@@ -46,7 +46,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       className="fixed inset-0 z-[100] flex items-center justify-center"
-      style={{ backgroundColor: '#080808' }}
+      style={{ backgroundColor: '#0a0a0a' }}
     >
       {/* White noise background */}
       <div className="absolute inset-0 opacity-10">

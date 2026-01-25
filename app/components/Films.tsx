@@ -172,15 +172,15 @@ export default function Films() {
     <section
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center py-24 md:py-32 overflow-hidden"
-      style={{ backgroundColor: '#080808' }}
+      style={{ backgroundColor: '#0a0a0a' }}
     >
-      {/* Scanline overlay - same as achievements */}
+      {/* Scanline overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `repeating-linear-gradient(
             0deg,
-            rgba(200, 200, 200, 0.015) 0px,
+            rgba(200, 200, 200, 0.02) 0px,
             transparent 1px,
             transparent 2px
           )`,
@@ -369,7 +369,7 @@ function FilmLine({
       <button
         onClick={onClick}
         onFocus={onFocus}
-        className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#00b8b8] focus:ring-offset-2 focus:ring-offset-[#080808] transition-all"
+        className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#00b8b8] focus:ring-offset-2 focus:ring-offset-[#0a0a0a] transition-all"
         aria-expanded={isExpanded}
         aria-label={`Film entry: ${film.title} ${film.year}`}
       >

@@ -50,7 +50,7 @@ export default function Projects() {
               className="group relative"
             >
               {/* Project Card */}
-              <div className="relative border border-crimson/30 p-6 transition-all duration-200 hover:border-crimson hover:bg-crimson/5" style={{ backgroundColor: '#080808' }}>
+              <div className="relative border border-crimson/30 p-6 transition-all duration-200 hover:border-crimson hover:bg-crimson/5" style={{ backgroundColor: '#0a0a0a' }}>
                 {/* CRT distortion on hover */}
                 {hoveredProject === project.id && (
                   <motion.div

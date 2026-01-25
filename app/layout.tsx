@@ -55,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${jetbrainsMono.variable} ${ibmPlexMono.variable} ${shareTechMono.variable} antialiased`} style={{ backgroundColor: '#080808' }}>
+      <body className={`${jetbrainsMono.variable} ${ibmPlexMono.variable} ${shareTechMono.variable} antialiased`} style={{ backgroundColor: '#0a0a0a' }}>
         {children}
       </body>
     </html>

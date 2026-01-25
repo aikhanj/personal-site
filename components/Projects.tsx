@@ -20,12 +20,20 @@ interface Project {
   };
 }
 
-// Status color mapping
+// Status color mapping with aggressive neon
 const statusColors: Record<string, string> = {
-  running: "#ff0033", // crimson
-  active: "#00b8b8", // cyan variant
-  sleeping: "#b6b600", // yellow
-  idle: "#7a7a7a", // gray
+  running: "#ff0033", // crimson - pulsing blood
+  active: "#00ffd5", // full cyan - bright
+  sleeping: "#ff00ff", // magenta instead of yellow
+  idle: "#39ff14", // toxic green
+};
+
+// Status glow mapping
+const statusGlows: Record<string, string> = {
+  running: "0 0 10px #ff0033, 0 0 20px #ff0033",
+  active: "0 0 10px #00ffd5, 0 0 20px #00ffd5",
+  sleeping: "0 0 10px #ff00ff, 0 0 15px #ff00ff",
+  idle: "0 0 8px #39ff14",
 };
 
 // Typing effect hook
@@ -188,7 +196,7 @@ export default function Projects() {
   return (
     <section
       className="relative min-h-screen flex items-center justify-center py-24 md:py-32 overflow-hidden"
-      style={{ backgroundColor: "#080808" }}
+      style={{ backgroundColor: "#0a0a0a" }}
     >
       {/* Scanline overlay */}
       <div
@@ -196,13 +204,14 @@ export default function Projects() {
         style={{
           background: `repeating-linear-gradient(
             0deg,
-            rgba(200, 200, 200, 0.015) 0px,
+            rgba(200, 200, 200, 0.02) 0px,
             transparent 1px,
             transparent 2px
           )`,
           opacity: 0.5,
         }}
       />
+
 
       <div ref={containerRef} className="relative z-10 w-[90%] max-w-[920px] mx-auto px-4 md:px-0">
         {/* Header */}
@@ -360,10 +369,13 @@ export default function Projects() {
                         )}
                       </span>
                       <span
-                        className="w-20 lowercase"
-                        style={{ color: statusColors[project.status] }}
+                        className={`w-20 lowercase font-bold ${isRunning ? 'signal-detected' : ''}`}
+                        style={{
+                          color: statusColors[project.status],
+                          textShadow: statusGlows[project.status],
+                        }}
                       >
-                        <GlitchText intensity="low" trigger={isHovered}>{project.status}</GlitchText>
+                        <GlitchText intensity={isRunning ? "high" : "low"} trigger={isHovered} randomGlitchInterval={isRunning ? 2000 : 10000}>{project.status}</GlitchText>
                       </span>
                       <span className="w-20 tabular-nums"><GlitchText intensity="low" trigger={isHovered}>{project.uptime}</GlitchText></span>
                       <span
@@ -472,13 +484,14 @@ export default function Projects() {
               const isKilled = killedPid === project.pid;
               const isRestarted = restartedPid === project.pid;
               const isFirstRow = index === 0;
+              const isRunningMobile = project.status === "running";
               const displayName =
                 isFirstRow && !reducedMotion ? firstRowName : project.name;
 
               return (
                 <motion.div key={`${project.id}-mobile`} variants={rowVariants}>
                   <div
-                    className="rounded-2xl bg-[#050505]/80 backdrop-blur-sm"
+                    className="rounded-2xl bg-[#0a0a0a]/90 backdrop-blur-sm border border-[#1a1a1a] hover:border-glow-neon transition-all duration-300"
                     style={{
                       opacity: isKilled ? 0 : 1,
                       transition: isKilled ? "opacity 0.9s ease-out" : "none",
@@ -500,8 +513,15 @@ export default function Projects() {
                         <span>
                           <GlitchText intensity="low">root · pid {project.pid}</GlitchText>
                         </span>
-                        <span style={{ color: statusColors[project.status] }}>
-                          <GlitchText intensity="low">{project.status}</GlitchText>
+                        <span
+                          className={isRunningMobile ? 'signal-detected' : ''}
+                          style={{
+                            color: statusColors[project.status],
+                            textShadow: statusGlows[project.status],
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          <GlitchText intensity={isRunningMobile ? "high" : "low"} randomGlitchInterval={isRunningMobile ? 2000 : 10000}>{project.status}</GlitchText>
                         </span>
                       </div>
                       <div className="mt-4 text-lg leading-tight" style={{ color: "#00ffd5" }}>
@@ -542,7 +562,7 @@ export default function Projects() {
                           style={{
                             color: "#bdbdbd",
                             letterSpacing: "0.02em",
-                            backgroundColor: "#070707",
+                            backgroundColor: "#0a0a0a",
                           }}
                         >
                           <div className="mb-2">
@@ -648,17 +668,34 @@ export default function Projects() {
             opacity: 0;
           }
         }
-        @keyframes heartbeat {
-          0%,
-          100% {
+        @keyframes heartbeat-aggressive {
+          0%, 85% {
             filter: brightness(1);
+            transform: translateX(0);
           }
-          50% {
-            filter: brightness(1.01);
+          86% {
+            filter: brightness(1.1) hue-rotate(10deg);
+            transform: translateX(-1px);
+          }
+          88% {
+            filter: brightness(1.2) hue-rotate(-10deg);
+            transform: translateX(1px);
+          }
+          90% {
+            filter: brightness(0.9);
+            transform: translateX(-2px);
+          }
+          92% {
+            filter: brightness(1.15);
+            transform: translateX(2px);
+          }
+          94% {
+            filter: brightness(1);
+            transform: translateX(0);
           }
         }
         .process-heartbeat {
-          animation: heartbeat 7s ease-in-out infinite;
+          animation: heartbeat-aggressive 4s ease-in-out infinite;
         }
         @media (prefers-reduced-motion: reduce) {
           .process-heartbeat {

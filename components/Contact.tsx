@@ -101,7 +101,7 @@ export default function Contact() {
                 </motion.div>
               )}
               
-              {/* Line 3: [connect] if youre at princeton, lets grab a coffee */}
+              {/* Line 3: [looking_for] hard problems, weird ideas, people who ship */}
               {visibleLines[2] && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -110,9 +110,9 @@ export default function Contact() {
                 >
                   <br />
                   <span className="text-[#00ffd5]"><GlitchText intensity="low">[</GlitchText></span>
-                  <span className="text-[#d0d0d0]"><GlitchText intensity="low">connection</GlitchText></span>
+                  <span className="text-[#d0d0d0]"><GlitchText intensity="low">looking_for</GlitchText></span>
                   <span className="text-[#00ffd5]"><GlitchText intensity="low">]</GlitchText></span>{" "}
-                  <span className="text-[#d0d0d0]"><GlitchText intensity="low">if youre at princeton, lets grab a coffee...</GlitchText></span>
+                  <span className="text-[#d0d0d0]"><GlitchText intensity="low">hard problems, weird ideas, people who ship.</GlitchText></span>
                 </motion.div>
               )}
               

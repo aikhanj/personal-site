@@ -53,19 +53,20 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen overflow-hidden terminal-hero">
-      {/* Faint scanlines overlay */}
+      {/* Scanlines overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `repeating-linear-gradient(
             0deg,
-            rgba(200, 200, 200, 0.015) 0px,
+            rgba(200, 200, 200, 0.02) 0px,
             transparent 1px,
             transparent 2px
           )`,
           opacity: 0.5,
         }}
       />
+
 
       {/* Main content - 90% width container */}
       <div className="relative z-10 w-[90%] max-w-6xl mx-auto pt-28 pb-24 md:pt-[32vh] md:pb-32">
@@ -104,13 +105,13 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="absolute z-10 hero-quote text-right max-w-md"
+          className="absolute z-10 hero-quote text-right max-w-md screen-tear"
           style={{
             right: windowWidth >= 1024 ? '5rem' : windowWidth >= 768 ? '3rem' : '1.5rem',
             bottom: windowHeight > 0 ? `${Math.max(60, windowHeight * 0.08)}px` : '60px',
           }}
         >
-          <GlitchText intensity="high" randomGlitchInterval={2000} initialScramble={true} initialScrambleDuration={700}>Неправильный не я.</GlitchText> <br /> <GlitchText intensity="high" randomGlitchInterval={2000} initialScramble={true} initialScrambleDuration={700}>Неправильный весь этот мир.</GlitchText>
+          <GlitchText intensity="extreme" randomGlitchInterval={1500} initialScramble={true} initialScrambleDuration={900}>Неправильный не я.</GlitchText> <br /> <GlitchText intensity="extreme" randomGlitchInterval={1500} initialScramble={true} initialScrambleDuration={900}>Неправильный весь этот мир.</GlitchText>
         </motion.div>
       )}
     </section>

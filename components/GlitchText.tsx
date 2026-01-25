@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 interface GlitchTextProps {
   children: React.ReactNode;
   className?: string;
-  intensity?: "low" | "medium" | "high";
+  intensity?: "low" | "medium" | "high" | "extreme";
   trigger?: boolean;
   randomGlitch?: boolean;
   randomGlitchInterval?: number;
@@ -68,6 +68,7 @@ export default function GlitchText({
     low: { duration: 30, chars: 0.1, randomChars: 0.05 },
     medium: { duration: 40, chars: 0.2, randomChars: 0.1 },
     high: { duration: 50, chars: 0.3, randomChars: 0.15 },
+    extreme: { duration: 80, chars: 0.5, randomChars: 0.25 },
   };
 
   // Main glitch loop that runs continuously
@@ -197,31 +198,62 @@ export default function GlitchText({
     };
   }, [randomGlitch, randomGlitchInterval, intensity]);
 
+  const isExtreme = intensity === "extreme";
+
   return (
     <motion.span
       className={`relative inline-block ${className}`}
       animate={
         glitched
           ? {
-              x: [0, -2, 2, -1, 1, 0],
-              y: [0, 1, -1, 0],
+              x: isExtreme ? [0, -4, 4, -2, 3, -1, 0] : [0, -2, 2, -1, 1, 0],
+              y: isExtreme ? [0, 2, -2, 1, -1, 0] : [0, 1, -1, 0],
             }
           : {}
       }
-      transition={{ duration: 0.08, ease: "easeOut" }}
+      transition={{ duration: isExtreme ? 0.1 : 0.08, ease: "easeOut" }}
     >
       <span className="relative z-10">{displayText}</span>
       {glitched && (
-        <span
-          className="absolute inset-0 z-0 text-[#00ffd5]"
-          style={{
-            clipPath: "inset(0 0 0 0)",
-            transform: "translate(-2px, 2px)",
-            opacity: 0.8,
-          }}
-        >
-          {displayText}
-        </span>
+        <>
+          {/* Cyan layer */}
+          <span
+            className="absolute inset-0 z-0 text-[#00ffd5]"
+            style={{
+              clipPath: "inset(0 0 0 0)",
+              transform: isExtreme ? "translate(-3px, 3px)" : "translate(-2px, 2px)",
+              opacity: isExtreme ? 0.9 : 0.8,
+            }}
+          >
+            {displayText}
+          </span>
+          {/* Crimson layer - only for extreme */}
+          {isExtreme && (
+            <span
+              className="absolute inset-0 z-0 text-[#ff0033]"
+              style={{
+                clipPath: "inset(0 0 0 0)",
+                transform: "translate(3px, -2px)",
+                opacity: 0.7,
+              }}
+            >
+              {displayText}
+            </span>
+          )}
+          {/* Magenta layer - only for extreme */}
+          {isExtreme && (
+            <span
+              className="absolute inset-0 z-0 text-[#ff00ff]"
+              style={{
+                clipPath: "inset(30% 0 50% 0)",
+                transform: "translate(-4px, 0)",
+                opacity: 0.5,
+              }}
+            >
+              {displayText}
+            </span>
+          )}
+        </>
       )}
     </motion.span>
   );

@@ -5,14 +5,13 @@ import { motion } from "framer-motion";
 import GlitchText from "./GlitchText";
 
 const manifestoLines = [
-  'im from kyrgyzstan.',
-    'you probably dont know what that is.',
-    `i want to change that.`,
-    "i love my country more than anything.",
-    '',
-    "i'm here to rewrite it.",
-    "i'm here to make it better.",
-    "i'm here to see it prosper.",
+    ' ',
+    'i want to learn',
+    'as much as possible',
+    'without using people',
+    'as stepping stones',
+    ' ',
+
 ];
 
 export default function Manifesto() {
@@ -28,7 +27,7 @@ export default function Manifesto() {
           transition={{ duration: 0.6 }}
           className="text-2xl md:text-3xl lg:text-4xl font-bold mb-24 md:mb-20 text-[#d0d0d0] tracking-tight"
         >
-          why i build
+          my goals
         </motion.h2>
         <div className="space-y-8 md:space-y-6">
           {manifestoLines.map((line, index) => (
