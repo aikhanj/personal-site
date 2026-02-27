@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import GlitchText from "./GlitchText";
+import Terminal from "./Terminal";
 
 const titleVariants = ["> khan/", "/usr/bin/khan"];
 
@@ -97,6 +98,13 @@ export default function Hero() {
             </motion.div>
           )}
         </div>
+      </div>
+
+      {/* Terminal - centered in hero */}
+      <div
+        className="absolute left-1/2 top-[45%] -translate-x-1/2 -translate-y-1/2 z-10 w-full"
+      >
+        <Terminal />
       </div>
 
       {/* Russian Quote - positioned at bottom right based on screen height */}
