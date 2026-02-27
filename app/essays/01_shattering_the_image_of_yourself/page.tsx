@@ -101,7 +101,7 @@ const glitchInterval = {
 };
 
 export default function Essay() {
-  const [lang, setLang] = useState<'ru' | 'en'>('ru');
+  const [lang, setLang] = useState<'ru' | 'en'>('en');
   const [titleRevealed, setTitleRevealed] = useState(false);
   const [revealed, setRevealed] = useState<boolean[]>(lines.map(() => false));
 
@@ -195,10 +195,24 @@ export default function Essay() {
       </div>
 
       {/* Spacer for fixed top bar */}
-      <div className="mt-28 md:mt-36 mb-20 md:mb-28" />
+      <div className="mt-28 md:mt-36 mb-12 md:mb-16" />
+
+      {/* Originally written note */}
+      <div
+        className="mb-14 md:mb-20"
+        style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 'clamp(0.55rem, 1vw, 0.65rem)',
+          color: '#333',
+          letterSpacing: '0.04em',
+          fontStyle: 'italic',
+        }}
+      >
+        originally written in russian
+      </div>
 
       {/* Lines */}
-      <div className="w-[85%] md:w-[80%] max-w-xl pb-40">
+      <div className="w-[85%] md:w-[80%] max-w-xl pb-20">
         {lines.map(({ ru, en, intensity }, i) => {
           const text = lang === 'ru' ? ru : en;
           return (
@@ -231,6 +245,7 @@ export default function Essay() {
           );
         })}
       </div>
+
     </main>
   );
 }
