@@ -7,8 +7,6 @@ const ESSAYS = [
   '01_shattering_the_image_of_yourself',
 ];
 
-const SPINNER = ['|', '/', '-', '\\'];
-
 type Entry = {
   id: number;
   kind: 'cmd' | 'out';
@@ -21,10 +19,8 @@ export default function Terminal() {
   const [history, setHistory] = useState<Entry[]>([]);
   const [value, setValue] = useState('');
   const [cursorPos, setCursorPos] = useState(0);
-  const [busy, setBusy] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hintVisible, setHintVisible] = useState(true);
-  const [frame, setFrame] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const idRef = useRef(0);
@@ -42,43 +38,17 @@ export default function Terminal() {
   }, []);
 
   useEffect(() => {
-    if (!busy) return;
-    const id = setInterval(() => setFrame(f => (f + 1) % 4), 100);
-    return () => clearInterval(id);
-  }, [busy]);
-
-  useEffect(() => {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight;
     }
-  }, [history, busy, frame]);
+  }, [history]);
 
   const exec = useCallback((raw: string): Entry[] => {
     const cmd = raw.trim();
     const [command, ...args] = cmd.toLowerCase().split(' ');
 
     if (command === 'help' || command === '/help' || command === '?') {
-      return [{ id: nextId(), kind: 'out', text: 'available commands: about, focus, projects, essays, contact, clear, whoami, sudo' }];
-    }
-    
-    if (command === 'about') {
-      return [{ id: nextId(), kind: 'out', text: 'aikhan. [domain: kyrgyzstan] [focus: film, systems, change]. dedicated to rebuilding through logic and light.' }];
-    }
-
-    if (command === 'whoami') {
-      return [{ id: nextId(), kind: 'out', text: 'guest@system.local' }];
-    }
-
-    if (command === 'sudo') {
-      return [{ id: nextId(), kind: 'out', text: 'effective user: root. but you still lack the conviction to alter this reality.' }];
-    }
-
-    if (command === 'focus') {
-      return [{ id: nextId(), kind: 'out', text: 'primary: municipal ai\nsecondary: film theory\ntertiary: systemic reconstruction' }];
-    }
-
-    if (command === 'contact') {
-      return [{ id: nextId(), kind: 'out', text: 'initiating handshake... find me at the intersection of decentralization and bishkek.' }];
+      return [{ id: nextId(), kind: 'out', text: 'available commands: essays, clear' }];
     }
 
     if (command === 'essays' || command === '/essays') {
@@ -90,25 +60,11 @@ export default function Terminal() {
       }));
     }
 
-    if (command === 'projects') {
-      return [
-        { id: nextId(), kind: 'out', text: 'recovering project registry...' },
-        { id: nextId(), kind: 'out', text: '1. local-system-v1: bishkek municipal optimization' },
-        { id: nextId(), kind: 'out', text: '2. cinematic-logic: narrative as a system' },
-        { id: nextId(), kind: 'out', text: 'type "ls /projects" for more (stub)' },
-      ];
-    }
-
-    if (command === 'exit') {
-      return [{ id: nextId(), kind: 'out', text: 'disconnection is not an option.' }];
-    }
-
     if (!cmd) return [];
     return [{ id: nextId(), kind: 'out', text: `command not found: ${command}. type "help" for a list of commands.` }];
   }, []);
 
   const run = useCallback((raw: string) => {
-    if (busy) return;
     setHintVisible(false);
 
     const cmd = raw.trim();
@@ -120,20 +76,13 @@ export default function Terminal() {
     }
 
     if (!cmd) {
-      setHistory(prev => [...prev, cmdEntry]);
+      setHistory(prev => [...prev, cmdEntry].slice(-15));
       return;
     }
 
-    setHistory(prev => [...prev, cmdEntry]);
-    setBusy(true);
-
-    const delay = 500 + Math.random() * 400;
-    setTimeout(() => {
-      const results = exec(raw);
-      setBusy(false);
-      setHistory(prev => [...prev, ...results]);
-    }, delay);
-  }, [busy, exec]);
+    const results = exec(raw);
+    setHistory(prev => [...prev, cmdEntry, ...results].slice(-15));
+  }, [exec]);
 
   const handleKey = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -177,23 +126,21 @@ export default function Terminal() {
         <div className="relative" style={fontStyle}>
           <div className="pointer-events-none select-none flex items-center">
             <span className="whitespace-pre" style={{ color: '#555' }}>
-              khan@xxxxxxxx:~${' '}
+              khan@xxxxxxxx:~$ {' '}
             </span>
             <span style={{ color: textColor, transition: 'color 0.15s' }}>
               {beforeCursor}
             </span>
-            {!busy && (
-              <span
-                className="inline-block"
-                style={{
-                  color: '#d0d0d0',
-                  animation: 'cursor-blink 1s step-end infinite',
-                  marginLeft: '0px',
-                }}
-              >
-                &#9610;
-              </span>
-            )}
+            <span
+              className="inline-block"
+              style={{
+                color: '#d0d0d0',
+                animation: 'cursor-blink 1s step-end infinite',
+                marginLeft: '0px',
+              }}
+            >
+              &#9610;
+            </span>
             <span style={{ color: textColor, transition: 'color 0.15s' }}>
               {afterCursor}
             </span>
@@ -210,7 +157,6 @@ export default function Terminal() {
             onClick={e => { e.stopPropagation(); syncCursor(); }}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            disabled={busy}
             className="absolute top-0 left-0 w-full h-full border-none outline-none"
             style={{
               background: 'transparent',
@@ -231,7 +177,7 @@ export default function Terminal() {
         </div>
 
         {/* ── Hint ── */}
-        {hintVisible && history.length === 0 && !busy && (
+        {hintVisible && history.length === 0 && (
           <div
             style={{
               ...fontStyle,
@@ -240,18 +186,18 @@ export default function Terminal() {
               marginTop: '0.5rem',
             }}
           >
-            try: /help
+            try: essays
           </div>
         )}
 
         {/* ── Output log ── */}
-        {(history.length > 0 || busy) && (
+        {history.length > 0 && (
           <div
             ref={logRef}
             className="overflow-y-auto scrollbar-hide"
             style={{
               ...fontStyle,
-              maxHeight: '25vh',
+              maxHeight: '150px',
               marginTop: '0.5rem',
             }}
           >
@@ -294,11 +240,6 @@ export default function Terminal() {
                 )}
               </div>
             ))}
-            {busy && (
-              <div style={{ color: '#555' }}>
-                [{SPINNER[frame]}] loading
-              </div>
-            )}
           </div>
         )}
       </div>

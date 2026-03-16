@@ -101,7 +101,7 @@ const glitchInterval = {
 };
 
 export default function Essay() {
-  const [lang, setLang] = useState<'ru' | 'en'>('en');
+  const [lang, setLang] = useState<'ru' | 'en'>('ru');
   const [titleRevealed, setTitleRevealed] = useState(false);
   const [revealed, setRevealed] = useState<boolean[]>(lines.map(() => false));
 

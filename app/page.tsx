@@ -7,7 +7,6 @@ import Hero from '@/components/Hero';
 import Manifesto from '@/components/Manifesto';
 import Achievements from '@/components/Achievements';
 import Projects from '@/components/Projects';
-import Films from '@/app/components/Films';
 import Contact from '@/components/Contact';
 
 export default function Home() {
@@ -39,7 +38,6 @@ export default function Home() {
           <Manifesto />
           <Achievements />
           <Projects />
-          <Films />
           <Contact />
         </main>
       )}
