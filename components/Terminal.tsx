@@ -55,21 +55,56 @@ export default function Terminal() {
 
   const exec = useCallback((raw: string): Entry[] => {
     const cmd = raw.trim();
-    const lower = cmd.toLowerCase();
+    const [command, ...args] = cmd.toLowerCase().split(' ');
 
-    if (lower === '/help') {
-      return [{ id: nextId(), kind: 'out', text: 'commands: /help, /essays, cls' }];
+    if (command === 'help' || command === '/help' || command === '?') {
+      return [{ id: nextId(), kind: 'out', text: 'available commands: about, focus, projects, essays, contact, clear, whoami, sudo' }];
     }
-    if (lower === '/essays') {
+    
+    if (command === 'about') {
+      return [{ id: nextId(), kind: 'out', text: 'aikhan. [domain: kyrgyzstan] [focus: film, systems, change]. dedicated to rebuilding through logic and light.' }];
+    }
+
+    if (command === 'whoami') {
+      return [{ id: nextId(), kind: 'out', text: 'guest@system.local' }];
+    }
+
+    if (command === 'sudo') {
+      return [{ id: nextId(), kind: 'out', text: 'effective user: root. but you still lack the conviction to alter this reality.' }];
+    }
+
+    if (command === 'focus') {
+      return [{ id: nextId(), kind: 'out', text: 'primary: municipal ai\nsecondary: film theory\ntertiary: systemic reconstruction' }];
+    }
+
+    if (command === 'contact') {
+      return [{ id: nextId(), kind: 'out', text: 'initiating handshake... find me at the intersection of decentralization and bishkek.' }];
+    }
+
+    if (command === 'essays' || command === '/essays') {
       return ESSAYS.map(s => ({
         id: nextId(),
         kind: 'out' as const,
-        text: s,
+        text: `> ${s}`,
         link: `/essays/${s}`,
       }));
     }
+
+    if (command === 'projects') {
+      return [
+        { id: nextId(), kind: 'out', text: 'recovering project registry...' },
+        { id: nextId(), kind: 'out', text: '1. local-system-v1: bishkek municipal optimization' },
+        { id: nextId(), kind: 'out', text: '2. cinematic-logic: narrative as a system' },
+        { id: nextId(), kind: 'out', text: 'type "ls /projects" for more (stub)' },
+      ];
+    }
+
+    if (command === 'exit') {
+      return [{ id: nextId(), kind: 'out', text: 'disconnection is not an option.' }];
+    }
+
     if (!cmd) return [];
-    return [{ id: nextId(), kind: 'out', text: `command not found: ${cmd}` }];
+    return [{ id: nextId(), kind: 'out', text: `command not found: ${command}. type "help" for a list of commands.` }];
   }, []);
 
   const run = useCallback((raw: string) => {
@@ -79,7 +114,7 @@ export default function Terminal() {
     const cmd = raw.trim();
     const cmdEntry: Entry = { id: nextId(), kind: 'cmd', text: cmd };
 
-    if (cmd.toLowerCase() === 'cls') {
+    if (cmd.toLowerCase() === 'cls' || cmd.toLowerCase() === 'clear') {
       setHistory([]);
       return;
     }

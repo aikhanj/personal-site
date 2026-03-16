@@ -18,6 +18,8 @@ export default function Hero() {
   const [windowHeight, setWindowHeight] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
 
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
     // Calculate window dimensions for quote positioning
     const updateDimensions = () => {
@@ -25,11 +27,19 @@ export default function Hero() {
       setWindowWidth(window.innerWidth);
     };
 
+    const handleMouseMove = (e: MouseEvent) => {
+      // Normalize mouse position to -1 to 1
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
+      setMousePos({ x, y });
+    };
+
     // Set initial dimensions
     updateDimensions();
 
     // Update on resize
     window.addEventListener('resize', updateDimensions);
+    window.addEventListener('mousemove', handleMouseMove);
 
     // Show metadata after a short delay
     const timer1 = setTimeout(() => setShowMetadata(true), 400);
@@ -46,11 +56,19 @@ export default function Hero() {
 
     return () => {
       window.removeEventListener('resize', updateDimensions);
+      window.removeEventListener('mousemove', handleMouseMove);
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearInterval(jitterInterval);
     };
   }, []);
+
+  // Calculate dynamic chromatic aberration based on mouse position
+  const dynamicShadow = `
+    ${-mousePos.x * 5}px 0 0 rgba(255, 0, 51, 0.4),
+    ${mousePos.x * 5}px 0 0 rgba(0, 255, 213, 0.4),
+    0 ${-mousePos.y * 2}px 10px rgba(255, 0, 255, 0.2)
+  `;
 
   return (
     <section className="relative min-h-screen overflow-hidden terminal-hero">
@@ -81,6 +99,8 @@ export default function Hero() {
             style={{
               transform: `translateY(${jitterOffset}px)`,
               transition: "transform 0.1s ease-out",
+              textShadow: dynamicShadow,
+              animation: 'none' // Override static animation for mouse-reactive shadow
             }}
           >
             <GlitchText intensity="low" initialScramble={true} initialScrambleDuration={600}>{titleVariant}</GlitchText>
@@ -93,6 +113,7 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
               className="hero-metadata"
+              style={{ textShadow: dynamicShadow.replace('5px', '2px') }}
             >
               <GlitchText intensity="low" initialScramble={true} initialScrambleDuration={500}>[domain: kyrgyzstan] [focus: film, systems, change]</GlitchText>
             </motion.div>
@@ -117,6 +138,7 @@ export default function Hero() {
           style={{
             right: windowWidth >= 1024 ? '5rem' : windowWidth >= 768 ? '3rem' : '1.5rem',
             bottom: windowHeight > 0 ? `${Math.max(60, windowHeight * 0.08)}px` : '60px',
+            textShadow: dynamicShadow
           }}
         >
           <GlitchText intensity="extreme" randomGlitchInterval={1500} initialScramble={true} initialScrambleDuration={900}>Неправильный не я.</GlitchText> <br /> <GlitchText intensity="extreme" randomGlitchInterval={1500} initialScramble={true} initialScrambleDuration={900}>Неправильный весь этот мир.</GlitchText>
