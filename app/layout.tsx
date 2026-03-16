@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, IBM_Plex_Mono, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
-
+import CustomCursor from "@/components/CustomCursor";
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin", "cyrillic"],
   weight: ["300", "400", "500", "700"],
@@ -56,6 +56,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${jetbrainsMono.variable} ${ibmPlexMono.variable} ${shareTechMono.variable} antialiased`} style={{ backgroundColor: '#0a0a0a' }}>
+        <CustomCursor />
         {children}
       </body>
     </html>
